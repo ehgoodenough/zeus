@@ -10,3 +10,26 @@
 html {
     background-color: #222;
 }
+
+canvas {
+    top: 0em;
+    left: 0em;
+    right: 0em;
+    bottom: 0em;
+    margin: auto;
+    position: fixed;
+    overflow: hidden;
+}
+
+@media(min-aspect-ratio: 16/9) {
+    canvas {
+        width: 177.778vh !important;
+        height: 100vh !important;
+    }
+}
+@media(max-aspect-ratio: 16/9) {
+    canvas {
+        height: 56.25vw !important;
+        width: 100vw !important;
+    }
+}

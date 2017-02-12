@@ -8,7 +8,6 @@ Electron.app.on("ready", function() {
     // window.webContents.openDevTools()
     
     Chokidar.watch("./source").on("all", function() {
-        console.log("reloading")
         window.reload()
     })
     

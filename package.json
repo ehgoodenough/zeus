@@ -7,6 +7,9 @@
     "type": "git",
     "url": "https://github.com/ehgoodenough/zeus"
   },
+  "dependencies": {
+    "pixi.js": "^4.3.5"
+  },
   "devDependencies": {
     "chokidar": "^1.6.1",
     "electron": "^1.4.15"
