@@ -3,18 +3,23 @@
   "version": "0.0.0",
   "description": "Some sort of souls-like.",
   "main": "entry.js",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/ehgoodenough/zeus"
   },
   "dependencies": {
-    "pixi.js": "^4.3.5"
+    "afloop": "^1.0.2",
+    "chokidar": "^1.6.1",
+    "pixi.js": "^4.3.5",
+    "yargs": "^6.6.0"
   },
   "devDependencies": {
-    "chokidar": "^1.6.1",
-    "electron": "^1.4.15"
+    "electron": "^1.4.15",
+    "electron-packager": "^8.5.1"
   },
   "scripts": {
-    "start": "electron ."
+    "start": "electron . --mode=development",
+    "build": "electron-packager . --out=builds --overwrite"
   }
 }
