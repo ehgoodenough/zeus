@@ -3,6 +3,3 @@ node_modules
 ._*
 *.log
 .DS_Store
-
-builds
-shares
