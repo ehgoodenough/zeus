@@ -10,9 +10,8 @@
   },
   "dependencies": {
     "afloop": "^1.0.2",
-    "chokidar": "^1.6.1",
     "pixi.js": "^4.3.5",
-    "yargs": "^6.6.0"
+    "statgrab": "^1.2.0"
   },
   "devDependencies": {
     "codeglue": "^1.1.1"

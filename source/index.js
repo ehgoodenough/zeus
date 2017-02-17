@@ -1,5 +1,6 @@
 var Pixi = require("pixi.js")
 var Afloop = require("afloop")
+var Statgrab = require("statgrab/do")
 
 Pixi.renderer = Pixi.autoDetectRenderer(320, 240)
 Pixi.renderer.backgroundColor = 0x444444
