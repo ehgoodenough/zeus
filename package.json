@@ -15,11 +15,10 @@
     "yargs": "^6.6.0"
   },
   "devDependencies": {
-    "electron": "^1.4.15",
-    "electron-packager": "^8.5.1"
+    "codeglue": "^1.1.1"
   },
   "scripts": {
-    "start": "electron . --mode=development",
-    "build": "electron-packager . --out=builds --overwrite"
+    "start": "codeglue --stage=development --mode=server",
+    "build": "codeglue --stage=production"
   }
 }
