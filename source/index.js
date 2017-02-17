@@ -1,5 +1,5 @@
 var Pixi = require("pixi.js")
-var Afloop = require("afloop")
+var Yaafloop = require("yaafloop")
 var Statgrab = require("statgrab/do")
 
 Pixi.renderer = Pixi.autoDetectRenderer(320, 240)
@@ -20,7 +20,7 @@ sprite.anchor.x = 0.5
 sprite.anchor.y = 0.5
 scene.addChild(sprite)
 
-var loop = new Afloop(function(delta) {
+var loop = new Yaafloop(function(delta) {
 
     // Update the sprite.
     sprite.position.x += 1.4

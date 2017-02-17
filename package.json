@@ -11,7 +11,8 @@
   "dependencies": {
     "afloop": "^1.0.2",
     "pixi.js": "^4.3.5",
-    "statgrab": "^1.2.0"
+    "statgrab": "^1.2.0",
+    "yaafloop": "^1.0.0"
   },
   "devDependencies": {
     "codeglue": "^1.1.1"
