@@ -1,15 +1,21 @@
 var Pixi = require("pixi.js")
 var Yaafloop = require("yaafloop")
 var Statgrab = require("statgrab/do")
+var FPSmeter = require("fpsmeter")
 
+///////////////////////
+// Configuring Pixi //
+/////////////////////
+
+Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 Pixi.renderer = Pixi.autoDetectRenderer(320, 240)
 Pixi.renderer.backgroundColor = 0x444444
-Pixi.renderer.roundPixels = true
 Pixi.render = function(scene) {
     this.renderer.render(scene)
 }
 
-document.body.appendChild(Pixi.renderer.view)
+var frame = document.getElementById("frame")
+frame.appendChild(Pixi.renderer.view)
 
 // Create a scene.
 var scene = new Pixi.Container()
@@ -20,6 +26,23 @@ sprite.anchor.x = 0.5
 sprite.anchor.y = 0.5
 scene.addChild(sprite)
 
+////////////////////
+// The FPS Meter //
+//////////////////
+
+var meter = undefined
+if(STAGE == "DEVELOPMENT") {
+    meter = new FPSMeter(frame, {
+        theme: "colorful", graph: true, heat: true,
+        left: "auto", top: "10px", right: "10px",
+        decimals: 0,
+    })
+}
+
+////////////////////
+// The Main Loop //
+//////////////////
+
 var loop = new Yaafloop(function(delta) {
 
     // Update the sprite.
@@ -29,4 +52,9 @@ var loop = new Yaafloop(function(delta) {
 
     // Render the scene.
     Pixi.render(scene)
+
+    // Update the FPS meter.
+    if(meter != undefined) {
+        meter.tick()
+    }
 })

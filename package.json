@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "afloop": "^1.0.2",
+    "fpsmeter": "^0.3.1",
     "pixi.js": "^4.3.5",
     "statgrab": "^1.2.0",
     "yaafloop": "^1.0.0"
