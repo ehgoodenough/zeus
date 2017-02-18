@@ -15,7 +15,7 @@
     "yaafloop": "^1.0.0"
   },
   "devDependencies": {
-    "codeglue": "^1.1.1"
+    "codeglue": "^1.1.4"
   },
   "scripts": {
     "start": "codeglue --stage=development --mode=server",
