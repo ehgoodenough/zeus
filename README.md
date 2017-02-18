@@ -21,3 +21,8 @@ For compiling a build:
 ```
 $ npm run build
 ```
+
+### To Do ###
+
+- Refactor requires to imports.
+- Use urlhashes to toggle devtools.

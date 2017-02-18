@@ -17,13 +17,17 @@ Pixi.render = function(scene) {
 var frame = document.getElementById("frame")
 frame.appendChild(Pixi.renderer.view)
 
+/////////////////////
+// The Game Scene //
+///////////////////
+
+var Sprite = require("scripts/Sprite.js")
+
 // Create a scene.
 var scene = new Pixi.Container()
 
 // Create a sprite and add it to the scene.
-var sprite = new Pixi.Sprite.fromImage(require("images/monster.png"))
-sprite.anchor.x = 0.5
-sprite.anchor.y = 0.5
+var sprite = new Sprite()
 scene.addChild(sprite)
 
 ////////////////////
