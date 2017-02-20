@@ -2,7 +2,7 @@ var Pixi = require("pixi.js")
 
 var DEFAULT_TEXTURE = Pixi.Texture.fromImage(require("images/pixel.png"))
 
-class Sprite extends Pixi.Sprite {
+export default class Sprite extends Pixi.Sprite {
     constructor(texture) {
         super(texture || DEFAULT_TEXTURE)
 
@@ -18,5 +18,3 @@ class Sprite extends Pixi.Sprite {
         this.anchor.y = 0.5
     }
 }
-
-module.exports = Sprite

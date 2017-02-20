@@ -21,7 +21,7 @@ frame.appendChild(Pixi.renderer.view)
 // The Game Scene //
 ///////////////////
 
-var Sprite = require("scripts/Sprite.js")
+import Sprite from "scripts/Sprite.js"
 
 // Create a scene.
 var scene = new Pixi.Container()

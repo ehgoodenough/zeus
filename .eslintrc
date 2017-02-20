@@ -1,4 +1,7 @@
 {
+  "env": {
+    "browser": true
+  },
   "rules": {
     "camelcase": 1,
     "indent": [1, 4],
@@ -8,10 +11,10 @@
     "space-before-blocks": 2
   },
   "parserOptions": {
+    "sourceType": "module",
     "ecmaVersion": 6,
     "ecmaFeatures": {
-      "impliedStrict": true,
-      "globalReturn": true
+      "modules": true
     }
   }
 }
