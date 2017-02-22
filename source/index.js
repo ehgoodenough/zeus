@@ -1,64 +1,44 @@
-var Pixi = require("pixi.js")
-var Yaafloop = require("yaafloop")
 var Statgrab = require("statgrab/do")
-var FPSmeter = require("fpsmeter")
+var Yaafloop = require("yaafloop")
+var Pixi = require("pixi.js")
 
-///////////////////////
-// Configuring Pixi //
-/////////////////////
+/////////////////
+// Pixi Setup //
+///////////////
 
 Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
-Pixi.renderer = Pixi.autoDetectRenderer(320, 240)
-Pixi.renderer.backgroundColor = 0x444444
-Pixi.render = function(scene) {
-    this.renderer.render(scene)
-}
 
-var frame = document.getElementById("frame")
-frame.appendChild(Pixi.renderer.view)
-
-/////////////////////
-// The Game Scene //
-///////////////////
-
-import Sprite from "scripts/Sprite.js"
-
-// Create a scene.
-var scene = new Pixi.Container()
-
-// Create a sprite and add it to the scene.
-var sprite = new Sprite()
-scene.addChild(sprite)
-
+//////////////////////
+// The Experiments //
 ////////////////////
-// The FPS Meter //
-//////////////////
 
-var meter = undefined
-if(STAGE == "DEVELOPMENT") {
-    meter = new FPSMeter(frame, {
-        theme: "colorful", graph: true, heat: true,
-        left: "auto", top: "10px", right: "10px",
-        decimals: 0,
+import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
+
+var experiments = [
+    new BouncingBoxExperiment(),
+]
+
+experiments.forEach(function(experiment) {
+    document.getElementById("experiments").appendChild(experiment.view)
+    experiment.renderer.view.addEventListener("click", function(event) {
+        activeExperiment = experiment
+        event.stopPropagation()
     })
-}
+})
+
+document.body.addEventListener("click", function(event) {
+    activeExperiment = undefined
+})
 
 ////////////////////
 // The Main Loop //
 //////////////////
 
+var activeExperiment = undefined
+
 var loop = new Yaafloop(function(delta) {
 
-    // Update the sprite.
-    sprite.position.x += 1.4
-    sprite.position.y += 1
-    sprite.rotation += 0.1
-
-    // Render the scene.
-    Pixi.render(scene)
-
-    // Update the FPS meter.
-    if(meter != undefined) {
-        meter.tick()
+    if(activeExperiment != undefined) {
+        activeExperiment.update(delta)
     }
 })
