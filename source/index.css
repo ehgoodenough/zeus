@@ -5,13 +5,19 @@
     user-select: none;
     image-rendering: pixelated;
 }
+@font-face {
+    font-family: tiny;
+    src: url("fonts/tiny.ttf") format("truetype");
+ }
 
 html {
-    color: #EEE;
+    color: #DDD;
     background-color: #222;
 
-    font-size: 16px;
-    font-family: monospace;
+    font-size: 32px;
+    line-height: 0.7em;
+    letter-spacing: 0.25px;
+    font-family: tiny;
 }
 
 #frame {
@@ -45,7 +51,7 @@ canvas {
 #experiments {
     margin: auto;
     padding: 32px;
-    max-width: 480px;
+    max-width: 640px;
 }
 
 #experiments > .experiment:not(:first-child) {
@@ -54,10 +60,4 @@ canvas {
 
 #experiments > .experiment > canvas {
     margin-top: 32px;
-}
-
-@media(max-width: 640px) {
-    #experiments {
-        /*text-align: justify*/
-    }
 }

@@ -24,5 +24,6 @@ $ npm run build
 
 ### To Do ###
 
-- Refactor requires to imports.
+- Refactor requires to imports, especially for Pixi.
+- Push some of the experiment code into container code.
 - Use urlhashes to toggle devtools.

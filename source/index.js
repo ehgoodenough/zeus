@@ -13,9 +13,11 @@ Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 ////////////////////
 
 import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
+import AnimatedSpriteExperiment from "scripts/experiments/AnimatedSpriteExperiment.js"
 
 var experiments = [
     new BouncingBoxExperiment(),
+    new AnimatedSpriteExperiment(),
 ]
 
 experiments.forEach(function(experiment) {
