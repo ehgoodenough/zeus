@@ -15,6 +15,12 @@ export default class Experiment extends Pixi.Container {
         this.view.className = "experiment"
     }
     update(delta) {
+        this.children.forEach(function(child) {
+            if(child.update instanceof Function) {
+                child.update(delta)
+            }
+        })
+
         this.renderer.render(this)
     }
     get description() {

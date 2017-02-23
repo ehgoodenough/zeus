@@ -10,7 +10,7 @@ html {
     color: #EEE;
     background-color: #222;
 
-    font-size: 17px;
+    font-size: 16px;
     font-family: monospace;
 }
 
@@ -45,9 +45,19 @@ canvas {
 #experiments {
     margin: auto;
     padding: 32px;
-    max-width: 320px;
+    max-width: 480px;
+}
+
+#experiments > .experiment:not(:first-child) {
+    margin-top: 64px;
 }
 
 #experiments > .experiment > canvas {
-    margin: 32px auto;
+    margin-top: 32px;
+}
+
+@media(max-width: 640px) {
+    #experiments {
+        /*text-align: justify*/
+    }
 }

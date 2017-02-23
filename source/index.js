@@ -38,7 +38,7 @@ var activeExperiment = undefined
 
 var loop = new Yaafloop(function(delta) {
 
-    if(activeExperiment != undefined) {
-        activeExperiment.update(delta)
-    }
+    experiments.forEach(function(experiment) {
+        experiment.update(delta)
+    })
 })
