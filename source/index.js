@@ -16,8 +16,8 @@ import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
 import AnimatedSpriteExperiment from "scripts/experiments/AnimatedSpriteExperiment.js"
 
 var experiments = [
-    new BouncingBoxExperiment(),
     new AnimatedSpriteExperiment(),
+    new BouncingBoxExperiment(),
 ]
 
 experiments.forEach(function(experiment) {
