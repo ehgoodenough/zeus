@@ -16,9 +16,11 @@ import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
 import AnimatedSpriteExperiment from "scripts/experiments/AnimatedSpriteExperiment.js"
 
 var experiments = [
-    new AnimatedSpriteExperiment(),
     new BouncingBoxExperiment(),
+    new AnimatedSpriteExperiment(),
 ]
+
+// experiments.reverse()
 
 experiments.forEach(function(experiment) {
     document.getElementById("experiments").appendChild(experiment.view)
