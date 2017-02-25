@@ -24,5 +24,6 @@ $ npm run build
 
 ### To Do ###
 
-- Push some of the experiment code into container code.
 - Use urlhashes to toggle devtools.
+- Figure out how to render crisp fonts.
+- Refactor all 320/180 into WIDTH/HEIGHT.

@@ -15,14 +15,18 @@ Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
 import AnimatedSpriteExperiment from "scripts/experiments/AnimatedSpriteExperiment.js"
 import TextExperiment from "scripts/experiments/TextExperiment.js"
+import InputPollingExperiment from "scripts/experiments/InputPollingExperiment.js"
 
 var experiments = [
     new BouncingBoxExperiment(),
     new AnimatedSpriteExperiment(),
     new TextExperiment(),
+    new InputPollingExperiment(),
 ]
 
 experiments.reverse()
+
+var activeExperiment = undefined
 
 experiments.forEach(function(experiment) {
     document.getElementById("experiments").appendChild(experiment.view)
@@ -40,11 +44,13 @@ document.body.addEventListener("click", function(event) {
 // The Main Loop //
 //////////////////
 
-var activeExperiment = undefined
-
 var loop = new Yaafloop(function(delta) {
 
     experiments.forEach(function(experiment) {
         experiment.update(delta)
     })
+})
+
+document.body.addEventListener("keydown", function(event) {
+    event.preventDefault()
 })
