@@ -2,7 +2,7 @@ var Pixi = require("pixi.js")
 var Afloop = require("afloop")
 var Statgrab = require("statgrab/do")
 
-Pixi.renderer = Pixi.autoDetectRenderer(320, 240)
+Pixi.renderer = Pixi.autoDetectRenderer(320, 180)
 Pixi.renderer.backgroundColor = 0x444444
 Pixi.renderer.roundPixels = true
 Pixi.render = function(scene) {
@@ -23,9 +23,9 @@ scene.addChild(sprite)
 var loop = new Afloop(function(delta) {
 
     // Update the sprite.
-    sprite.position.x += 1.4
+    sprite.position.x += 1
     sprite.position.y += 1
-    sprite.rotation += 0.1
+    //sprite.rotation += 0.1
 
     // Render the scene.
     Pixi.render(scene)
