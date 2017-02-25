@@ -10,11 +10,14 @@
   },
   "dependencies": {
     "afloop": "^1.0.2",
+    "fpsmeter": "^0.3.1",
+    "keyb": "^1.1.0",
     "pixi.js": "^4.3.5",
-    "statgrab": "^1.2.0"
+    "statgrab": "^1.2.0",
+    "yaafloop": "^1.0.0"
   },
   "devDependencies": {
-    "codeglue": "^1.1.1"
+    "codeglue": "^1.1.6"
   },
   "scripts": {
     "start": "codeglue --stage=development --mode=server",

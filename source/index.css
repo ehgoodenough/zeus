@@ -3,15 +3,24 @@
     padding: 0;
     cursor: default;
     user-select: none;
-    box-sizing: border-box;
     image-rendering: pixelated;
 }
+@font-face {
+    font-family: tiny;
+    src: url("fonts/tiny.ttf") format("truetype");
+ }
 
 html {
+    color: #DDD;
     background-color: #222;
+
+    font-size: 32px;
+    line-height: 0.7em;
+    letter-spacing: 0.25px;
+    font-family: tiny;
 }
 
-canvas {
+#frame {
     top: 0em;
     left: 0em;
     right: 0em;
@@ -22,14 +31,33 @@ canvas {
 }
 
 @media(min-aspect-ratio: 16/9) {
-    canvas {
-        width: 177.778vh !important;
-        height: 100vh !important;
+    #frame {
+        width: 177.778vh;
+        height: 100vh;
     }
 }
 @media(max-aspect-ratio: 16/9) {
-    canvas {
-        height: 56.25vw !important;
-        width: 100vw !important;
+    #frame {
+        height: 56.25vw;
+        width: 100vw;
     }
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+}
+
+#experiments {
+    margin: auto;
+    padding: 32px;
+    max-width: 640px;
+}
+
+#experiments > .experiment:not(:first-child) {
+    margin-top: 64px;
+}
+
+#experiments > .experiment > canvas {
+    margin-top: 32px;
 }

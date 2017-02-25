@@ -1,32 +1,61 @@
-var Pixi = require("pixi.js")
-var Afloop = require("afloop")
-var Statgrab = require("statgrab/do")
+import "statgrab/do"
+import Yaafloop from "yaafloop"
+import * as Pixi from "pixi.js"
 
-Pixi.renderer = Pixi.autoDetectRenderer(320, 180)
-Pixi.renderer.backgroundColor = 0x444444
-Pixi.renderer.roundPixels = true
-Pixi.render = function(scene) {
-    this.renderer.render(scene)
-}
+/////////////////
+// Pixi Setup //
+///////////////
 
-document.body.appendChild(Pixi.renderer.view)
+Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 
-// Create a scene.
-var scene = new Pixi.Container()
+//////////////////////
+// The Experiments //
+////////////////////
 
-// Create a sprite and add it to the scene.
-var sprite = new Pixi.Sprite.fromImage(require("images/monster.png"))
-sprite.anchor.x = 0.5
-sprite.anchor.y = 0.5
-scene.addChild(sprite)
+import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
+// import AnimatedSpriteExperiment from "scripts/experiments/AnimatedSpriteExperiment.js"
+import TextExperiment from "scripts/experiments/TextExperiment.js"
+import InputPollingExperiment from "scripts/experiments/InputPollingExperiment.js"
+import ActionExperiment from "scripts/experiments/ActionExperiment"
+import VariableJumpExperiment from "scripts/experiments/VariableJumpExperiment"
 
-var loop = new Afloop(function(delta) {
+var experiments = [
+    new BouncingBoxExperiment(),
+    // new AnimatedSpriteExperiment(),
+    new TextExperiment(),
+    new InputPollingExperiment(),
+    new ActionExperiment(),
+    new VariableJumpExperiment()
+]
+//experiments.reverse()
 
-    // Update the sprite.
-    sprite.position.x += 1
-    sprite.position.y += 1
-    //sprite.rotation += 0.1
+var focusedExperiment = undefined
+focusedExperiment = experiments[0]
 
-    // Render the scene.
-    Pixi.render(scene)
+experiments.forEach(function(experiment) {
+    document.getElementById("experiments").appendChild(experiment.view)
+    experiment.renderer.view.addEventListener("click", function(event) {
+        focusedExperiment = experiment
+        event.stopPropagation()
+    })
+})
+
+document.body.addEventListener("click", function(event) {
+    focusedExperiment = undefined
+})
+
+////////////////////
+// The Main Loop //
+//////////////////
+
+var loop = new Yaafloop(function(delta) {
+    experiments.forEach(function(experiment) {
+        experiment == focusedExperiment ? experiment.update(delta) : null
+        experiment.alpha = experiment == focusedExperiment ? 1 : 0.1
+        experiment.render()
+    })
+})
+
+document.body.addEventListener("keydown", function(event) {
+    event.preventDefault()
 })
