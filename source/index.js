@@ -14,13 +14,15 @@ Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 
 import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
 import AnimatedSpriteExperiment from "scripts/experiments/AnimatedSpriteExperiment.js"
+import TextExperiment from "scripts/experiments/TextExperiment.js"
 
 var experiments = [
     new BouncingBoxExperiment(),
     new AnimatedSpriteExperiment(),
+    new TextExperiment(),
 ]
 
-// experiments.reverse()
+experiments.reverse()
 
 experiments.forEach(function(experiment) {
     document.getElementById("experiments").appendChild(experiment.view)
