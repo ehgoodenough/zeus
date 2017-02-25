@@ -23,21 +23,20 @@ var experiments = [
     new TextExperiment(),
     new InputPollingExperiment(),
 ]
-
 experiments.reverse()
 
-var activeExperiment = undefined
+var focusedExperiment = undefined
 
 experiments.forEach(function(experiment) {
     document.getElementById("experiments").appendChild(experiment.view)
     experiment.renderer.view.addEventListener("click", function(event) {
-        activeExperiment = experiment
+        focusedExperiment = experiment
         event.stopPropagation()
     })
 })
 
 document.body.addEventListener("click", function(event) {
-    activeExperiment = undefined
+    focusedExperiment = undefined
 })
 
 ////////////////////
@@ -45,9 +44,10 @@ document.body.addEventListener("click", function(event) {
 //////////////////
 
 var loop = new Yaafloop(function(delta) {
-
     experiments.forEach(function(experiment) {
-        experiment.update(delta)
+        experiment == focusedExperiment ? experiment.update(delta) : null
+        experiment.alpha = experiment == focusedExperiment ? 1 : 0.1
+        experiment.render()
     })
 })
 

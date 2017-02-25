@@ -20,7 +20,8 @@ export default class Experiment extends Pixi.Container {
                 child.update(delta)
             }
         })
-
+    }
+    render() {
         this.renderer.render(this)
     }
     get description() {

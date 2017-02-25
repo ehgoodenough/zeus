@@ -27,3 +27,5 @@ $ npm run build
 - Use urlhashes to toggle devtools.
 - Figure out how to render crisp fonts.
 - Refactor all 320/180 into WIDTH/HEIGHT.
+- Extend input handling to support gamepads.
+- Prove you can do isJustDown input polling.
