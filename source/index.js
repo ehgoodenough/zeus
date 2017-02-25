@@ -16,16 +16,19 @@ import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
 import AnimatedSpriteExperiment from "scripts/experiments/AnimatedSpriteExperiment.js"
 import TextExperiment from "scripts/experiments/TextExperiment.js"
 import InputPollingExperiment from "scripts/experiments/InputPollingExperiment.js"
+import ActionExperiment from "scripts/experiments/ActionExperiment"
 
 var experiments = [
     new BouncingBoxExperiment(),
     new AnimatedSpriteExperiment(),
     new TextExperiment(),
     new InputPollingExperiment(),
+    new ActionExperiment()
 ]
 experiments.reverse()
 
 var focusedExperiment = undefined
+focusedExperiment = experiments[0]
 
 experiments.forEach(function(experiment) {
     document.getElementById("experiments").appendChild(experiment.view)
