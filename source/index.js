@@ -1,6 +1,6 @@
-var Statgrab = require("statgrab/do")
-var Yaafloop = require("yaafloop")
-var Pixi = require("pixi.js")
+import "statgrab/do"
+import Yaafloop from "yaafloop"
+import * as Pixi from "pixi.js"
 
 /////////////////
 // Pixi Setup //

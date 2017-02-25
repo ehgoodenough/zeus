@@ -1,4 +1,4 @@
-var Pixi = require("pixi.js")
+import * as Pixi from "pixi.js"
 
 export default class Experiment extends Pixi.Container {
     constructor() {

@@ -1,4 +1,4 @@
-var Pixi = require("pixi.js")
+import * as Pixi from "pixi.js"
 
 import Experiment from "scripts/experiments/Experiment.js"
 import Sprite from "scripts/models/Sprite.js"

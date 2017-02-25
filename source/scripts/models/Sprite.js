@@ -1,4 +1,4 @@
-var Pixi = require("pixi.js")
+import * as Pixi from "pixi.js"
 
 var DEFAULT_TEXTURE = Pixi.Texture.fromImage(require("images/pixel.png"))
 
