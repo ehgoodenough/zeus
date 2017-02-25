@@ -27,8 +27,14 @@ export default class TextExperiment extends Experiment {
     }
     update(delta) {
         super.update(delta)
+
+        // A hack to load our font. :(
+        this.text.style.fontFamily = ""
+        this.text.style.fontFamily = "tiny"
     }
     get description() {
-        return "Hello World!!"
+        return "Some text, styled with a truetype font. I'm not happy with "
+             + "how fuzzy the font is rasterized, so I'll revisit this "
+             + "sometime later."
     }
 }
