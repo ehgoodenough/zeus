@@ -34,7 +34,9 @@ class Hero extends Sprite {
         this.scale.x *= -1
 
         this.gravity = 0.5
-        this.jumpForce = -6
+        this.gravityDampener = 0.32
+        this.gravityDampeningThreshold = -5
+        this.jumpForce = -6.5
     }
     update(delta) {
         if(Keyb.isDown("A") || Keyb.isDown("<left>")) {
@@ -60,8 +62,9 @@ class Hero extends Sprite {
 
         //Gravity
         if(!this.isGrounded()) {
-            if(this.velocity.y < 0 && (Keyb.isDown("W") || Keyb.isDown("<up>"))) {
-                this.velocity.y += this.gravity * 0.5 * delta.f
+            //console.log(this.velocity.y < this.gravityDampeningThreshold)
+            if(this.velocity.y < this.gravityDampeningThreshold && (Keyb.isDown("W") || Keyb.isDown("<up>"))) {
+                this.velocity.y += this.gravity * this.gravityDampener * delta.f
             } else {
                 this.velocity.y += this.gravity * delta.f
             }
