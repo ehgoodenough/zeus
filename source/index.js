@@ -16,7 +16,6 @@ import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
 import AnimatedSpriteExperiment from "scripts/experiments/AnimatedSpriteExperiment.js"
 import TextExperiment from "scripts/experiments/TextExperiment.js"
 import InputPollingExperiment from "scripts/experiments/InputPollingExperiment.js"
-import ActionExperiment from "scripts/experiments/ActionExperiment"
 import VariableJumpExperiment from "scripts/experiments/VariableJumpExperiment"
 
 var experiments = [
