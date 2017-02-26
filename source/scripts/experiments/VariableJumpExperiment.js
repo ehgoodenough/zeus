@@ -32,13 +32,9 @@ class Hero extends Sprite {
         this.speed = 2
 
         this.scale.x *= -1
-    }
-    isGrounded() {
-        if(this.position.y >= 180 - 32) {
-            return true
-        } else {
-            return false
-        }
+
+        this.gravity = 0.5
+        this.jumpForce = -6
     }
     update(delta) {
         if(Keyb.isDown("A") || Keyb.isDown("<left>")) {
@@ -53,7 +49,7 @@ class Hero extends Sprite {
 
         if(Keyb.isDown("W") || Keyb.isDown("<up>")) {
             if(this.isGrounded()) {
-                this.velocity.y -= 6
+                this.velocity.y += this.jumpForce
             }
         }
 
@@ -64,15 +60,27 @@ class Hero extends Sprite {
 
         //Gravity
         if(!this.isGrounded()) {
-            this.velocity.y += 0.3
+            if(this.velocity.y < 0 && (Keyb.isDown("W") || Keyb.isDown("<up>"))) {
+                this.velocity.y += this.gravity * 0.5 * delta.f
+            } else {
+                this.velocity.y += this.gravity * delta.f
+            }
         } else {
             this.velocity.y = 0
+            this.position.y = 180-32
         }
 
         if(this.position.x < 0) {
             this.position.x = 0
         } if(this.position.x > 320) {
             this.position.x = 320
+        }
+    }
+    isGrounded() {
+        if(this.position.y >= 180 - 32) {
+            return true
+        } else {
+            return false
         }
     }
 }
