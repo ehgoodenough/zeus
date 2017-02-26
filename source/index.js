@@ -25,7 +25,7 @@ var experiments = [
     new InputPollingExperiment(),
     new VariableJumpExperiment()
 ]
-//experiments.reverse()
+experiments.reverse()
 
 var focusedExperiment = undefined
 focusedExperiment = experiments[0]

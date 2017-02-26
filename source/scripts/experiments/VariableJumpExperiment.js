@@ -38,12 +38,12 @@ class Hero extends Sprite {
     }
     update(delta) {
         if(Keyb.isDown("A") || Keyb.isDown("<left>")) {
-            this.velocity.x = -1 * this.speed * delta.f
+            this.velocity.x = -1 * this.speed
             this.scale.x = +1
         }
 
         if(Keyb.isDown("D") || Keyb.isDown("<right>")) {
-            this.velocity.x = +1 * this.speed * delta.f
+            this.velocity.x = +1 * this.speed
             this.scale.x = -1
         }
 
