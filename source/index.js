@@ -13,7 +13,7 @@ Pixi.settings.SCALE_MODE = Pixi.SCALE_MODES.NEAREST
 ////////////////////
 
 import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
-import AnimatedSpriteExperiment from "scripts/experiments/AnimatedSpriteExperiment.js"
+// import AnimatedSpriteExperiment from "scripts/experiments/AnimatedSpriteExperiment.js"
 import TextExperiment from "scripts/experiments/TextExperiment.js"
 import InputPollingExperiment from "scripts/experiments/InputPollingExperiment.js"
 import ActionExperiment from "scripts/experiments/ActionExperiment"
@@ -21,7 +21,7 @@ import VariableJumpExperiment from "scripts/experiments/VariableJumpExperiment"
 
 var experiments = [
     new BouncingBoxExperiment(),
-    new AnimatedSpriteExperiment(),
+    // new AnimatedSpriteExperiment(),
     new TextExperiment(),
     new InputPollingExperiment(),
     new ActionExperiment(),
