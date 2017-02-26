@@ -33,6 +33,13 @@ class Hero extends Sprite {
 
         this.scale.x *= -1
     }
+    isGrounded() {
+        if(this.position.y >= 180 - 32) {
+            return true
+        } else {
+            return false
+        }
+    }
     update(delta) {
         if(Keyb.isDown("A") || Keyb.isDown("<left>")) {
             this.velocity.x = -1 * this.speed * delta.f
@@ -44,11 +51,23 @@ class Hero extends Sprite {
             this.scale.x = -1
         }
 
+        if(Keyb.isDown("W") || Keyb.isDown("<up>")) {
+            if(this.isGrounded()) {
+                this.velocity.y -= 6
+            }
+        }
+
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
 
         this.velocity.x *= 0.8
-        this.velocity.y *= 0.8
+
+        //Gravity
+        if(!this.isGrounded()) {
+            this.velocity.y += 0.3
+        } else {
+            this.velocity.y = 0
+        }
 
         if(this.position.x < 0) {
             this.position.x = 0
