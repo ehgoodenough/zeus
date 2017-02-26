@@ -24,7 +24,6 @@ var experiments = [
     new AnimatedSpriteExperiment(),
     new TextExperiment(),
     new InputPollingExperiment(),
-    new ActionExperiment(),
     new VariableJumpExperiment()
 ]
 //experiments.reverse()
