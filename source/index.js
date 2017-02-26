@@ -56,7 +56,7 @@ var loop = new Yaafloop(function(delta) {
 
 import vkey from "vkey"
 document.body.addEventListener("keydown", function(event) {
-    if(event.keyCode == vkey["<up>"] || event.keyCode == vkey["<down>"]) {
+    if(vkey[event.keyCode] == "<up>" || vkey[event.keyCode] == "<down>") {
         event.preventDefault()
     }
 })
