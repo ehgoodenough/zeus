@@ -9,7 +9,9 @@ export default class ActionExperiment extends Experiment {
         super()
 
         this.addChild(new Ground())
-        this.addChild(new Hero())
+        this.theHero = new Hero()
+        this.addChild(this.theHero)
+        this.addChild(this.theHero.thePlatform)
     }
     get description() {
         return "A sprite that has a notion of velocity and acceleration. "
@@ -44,10 +46,24 @@ class Hero extends Sprite {
         this.jumpForce = -5.8
         this.minJumpHeight = 20
         this.groundedYPosition = 180 - 36
+        this.lastGroundedYPosition = this.groundedYPosition
+
+        this.thePlatform = new Platform()
     }
     update(delta) {
         var applyGroundedFriction = true
         var applyAerialFriction = true
+        var jumpedSinceGrounded = false
+
+        if(this.position.x > this.thePlatform.position.x - this.thePlatform.scale.x/2
+        && this.position.x < this.thePlatform.position.x + this.thePlatform.scale.x/2) {
+            if(this.position.y < this.thePlatform.position.y - 24) {
+                this.groundedYPosition = this.thePlatform.position.y - 24
+            }
+        } else {
+            this.groundedYPosition = 180 - 36
+        }
+
         if(Keyb.isDown("A") || Keyb.isDown("<left>")) {
             if(this.isGrounded()) {
                 this.scale.x = +1
@@ -60,7 +76,7 @@ class Hero extends Sprite {
                 }
             } else if(this.velocity.x > -1 * this.airSpeed) {
                 this.velocity.x -= this.aerialAcceleration
-                if(this.velocity.x < -1* this.airSpeed){
+                if(this.velocity.x < -1* this.airSpeed) {
                     this.velocity.x = -1 * this.airSpeed
                 }
                 applyAerialFriction = false
@@ -80,7 +96,7 @@ class Hero extends Sprite {
             } else {
                 if(this.velocity.x < this.airSpeed) {
                     this.velocity.x += this.aerialAcceleration
-                    if(this.velocity.x > +1 * this.airSpeed){
+                    if(this.velocity.x > +1 * this.airSpeed) {
                         this.velocity.x = +1 * this.airSpeed
                     }
                     applyAerialFriction = false
@@ -91,6 +107,8 @@ class Hero extends Sprite {
         if(Keyb.isDown("W") || Keyb.isDown("<up>")) {
             if(this.isGrounded()) {
                 this.velocity.y += this.jumpForce
+                this.lastGroundedYPosition = this.position.y
+                jumpedSinceGrounded = true
             }
         }
 
@@ -109,7 +127,8 @@ class Hero extends Sprite {
         if(!this.isGrounded()) {
             if(this.velocity.y < this.gravityDampeningThreshold &&
                 (Keyb.isDown("W") || Keyb.isDown("<up>")) ||
-                this.groundedYPosition - this.position.y < this.minJumpHeight) {
+                (this.lastGroundedYPosition - this.position.y < this.minJumpHeight
+                && jumpedSinceGrounded)) {
                 //If anything else ever causes the character to move upward
                 //We may need to make sure that this gravity dampening
                 //Only happens during a jump action
@@ -120,6 +139,7 @@ class Hero extends Sprite {
         } else {
             this.velocity.y = 0
             this.position.y = this.groundedYPosition
+            jumpedSinceGrounded = false
         }
 
         if(this.position.x < 0) {
@@ -146,6 +166,22 @@ class Ground extends Sprite {
 
         this.anchor.y = 1
         this.position.y = 180
+
+        this.tint = 0x888888
+    }
+}
+
+class Platform extends Sprite {
+    constructor() {
+        super()
+
+        this.anchor.x = 0.5
+        this.scale.x = 40
+        this.position.x = 80
+
+        this.anchor.y = 1
+        this.scale.y = 4
+        this.position.y = 130
 
         this.tint = 0x888888
     }
