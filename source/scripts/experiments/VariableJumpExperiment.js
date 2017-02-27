@@ -8,15 +8,24 @@ export default class ActionExperiment extends Experiment {
     constructor() {
         super()
 
-        this.addChild(new Ground())
-        this.theHero = new Hero()
-        this.addChild(this.theHero)
-        this.addChild(this.theHero.thePlatform)
+        var theHero = this.addChild(new Hero())
+        var theLevel = this.addChild(new Level())
+        this.collisionManager = new CollisionManager(theHero, theLevel)
+
+        this.children.reverse()
     }
     get description() {
         return "A sprite that has a notion of velocity and acceleration. "
              + "It can jump to a multitude of altitudes, drift while airborne, "
              + "and make slight adjustments to its position while grounded."
+    }
+    update(delta) {
+        this.children.forEach(function(child) {
+            if(child.update instanceof Function) {
+                child.update(delta)
+            }
+        })
+        this.collisionManager.update()
     }
 }
 
@@ -45,24 +54,16 @@ class Hero extends Sprite {
         this.gravityDampeningThreshold = -3.5
         this.jumpForce = -5.8
         this.minJumpHeight = 20
-        this.groundedYPosition = 180 - 36
+        this.defaultGroundedYPosition = 140
+        this.groundedYPosition = this.defaultGroundedYPosition
         this.lastGroundedYPosition = this.groundedYPosition
 
-        this.thePlatform = new Platform()
+        //this.thePlatform = new Platform()
     }
     update(delta) {
         var applyGroundedFriction = true
         var applyAerialFriction = true
-        var jumpedSinceGrounded = false
-
-        if(this.position.x > this.thePlatform.position.x - this.thePlatform.scale.x/2
-        && this.position.x < this.thePlatform.position.x + this.thePlatform.scale.x/2) {
-            if(this.position.y < this.thePlatform.position.y - 24) {
-                this.groundedYPosition = this.thePlatform.position.y - 24
-            }
-        } else {
-            this.groundedYPosition = 180 - 36
-        }
+        var hasJumpedSinceGrounded = false
 
         if(Keyb.isDown("A") || Keyb.isDown("<left>")) {
             if(this.isGrounded()) {
@@ -105,10 +106,17 @@ class Hero extends Sprite {
         }
 
         if(Keyb.isDown("W") || Keyb.isDown("<up>")) {
-            if(this.isGrounded()) {
+            if(!hasJumpedSinceGrounded && this.isGrounded()) {
                 this.velocity.y += this.jumpForce
                 this.lastGroundedYPosition = this.position.y
-                jumpedSinceGrounded = true
+                hasJumpedSinceGrounded = true
+            }
+        }
+
+        if(Keyb.isDown("S") || Keyb.isDown("<down>")) {
+            if(this.isGrounded() && this.position.y < this.defaultGroundedYPosition) {
+                this.position.y += 0.0001
+                this.groundedYPosition = this.defaultGroundedYPosition
             }
         }
 
@@ -128,7 +136,7 @@ class Hero extends Sprite {
             if(this.velocity.y < this.gravityDampeningThreshold &&
                 (Keyb.isDown("W") || Keyb.isDown("<up>")) ||
                 (this.lastGroundedYPosition - this.position.y < this.minJumpHeight
-                && jumpedSinceGrounded)) {
+                && hasJumpedSinceGrounded)) {
                 //If anything else ever causes the character to move upward
                 //We may need to make sure that this gravity dampening
                 //Only happens during a jump action
@@ -139,7 +147,7 @@ class Hero extends Sprite {
         } else {
             this.velocity.y = 0
             this.position.y = this.groundedYPosition
-            jumpedSinceGrounded = false
+            hasJumpedSinceGrounded = false
         }
 
         if(this.position.x < 0) {
@@ -163,26 +171,76 @@ class Ground extends Sprite {
 
         this.anchor.x = 0
         this.scale.x = 320
+        this.scale.y = 20
 
-        this.anchor.y = 1
-        this.position.y = 180
+        this.anchor.y = 0
+        this.position.y = 160
 
         this.tint = 0x888888
     }
 }
 
 class Platform extends Sprite {
-    constructor() {
+    constructor(xPos, yPos, xScale, yScale) {
         super()
 
         this.anchor.x = 0.5
-        this.scale.x = 40
-        this.position.x = 80
+        this.scale.x = xScale
+        this.position.x = xPos
 
-        this.anchor.y = 1
-        this.scale.y = 4
-        this.position.y = 130
+        this.anchor.y = 0
+        this.scale.y = yScale
+        this.position.y = yPos
 
         this.tint = 0x888888
+    }
+    isPointAboveMe(point) {
+        if(point.x >= this.position.x - this.scale.x/2
+        && point.x <= this.position.x + this.scale.x/2
+        && point.y <= this.position.y) {
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
+class Level extends Sprite {
+    constructor() {
+        super(Pixi.Texture.EMPTY)
+
+        this.position.x = 0
+        this.position.y = 0
+        this.anchor.x = 0
+        this.anchor.y = 0
+
+        this.ground = this.addChild(new Ground())
+        this.platforms = [new Platform(60, 140, 60, 4),
+            new Platform(220, 114, 100, 4),
+            new Platform(245, 80, 50, 4)]
+        for(let i = 0; i < this.platforms.length; i++) {
+            this.addChild(this.platforms[i])
+        }
+    }
+}
+
+class CollisionManager {
+    constructor(hero, level) {
+        this.hero = hero
+        this.level = level
+    }
+    update() {
+        var nearestLandingPlatform = this.level.ground
+        var heroHeight = 20
+        for(let i = 0; i < this.level.platforms.length; i ++) {
+            var maxAltitude = 0
+            if(180 - this.level.platforms[i].position.y > maxAltitude
+                && this.level.platforms[i].isPointAboveMe(
+                {x: this.hero.position.x, y: this.hero.position.y + heroHeight})) {
+                maxAltitude = 180 - this.level.platforms[i].position.y
+                nearestLandingPlatform = this.level.platforms[i]
+            }
+        }
+        this.hero.groundedYPosition = nearestLandingPlatform.position.y - heroHeight
     }
 }
