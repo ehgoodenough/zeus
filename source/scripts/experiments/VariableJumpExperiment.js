@@ -31,8 +31,10 @@ class Hero extends Sprite {
 
         this.groundSpeed = 2.8
         this.groundAcceleration = 0.4
+        this.groundFriction = 0.32
         this.airSpeed = 2.8
         this.aerialAcceleration = 0.3
+        this.aerialFriction = 0.05
 
         this.scale.x *= -1
 
@@ -45,6 +47,7 @@ class Hero extends Sprite {
     }
     update(delta) {
         var applyGroundedFriction = true
+        var applyAerialFriction = true
         if(Keyb.isDown("A") || Keyb.isDown("<left>")) {
             if(this.isGrounded()) {
                 this.scale.x = +1
@@ -60,6 +63,7 @@ class Hero extends Sprite {
                 if(this.velocity.x < -1* this.airSpeed){
                     this.velocity.x = -1 * this.airSpeed
                 }
+                applyAerialFriction = false
             }
         }
 
@@ -79,6 +83,7 @@ class Hero extends Sprite {
                     if(this.velocity.x > +1 * this.airSpeed){
                         this.velocity.x = +1 * this.airSpeed
                     }
+                    applyAerialFriction = false
                 }
             }
         }
@@ -94,7 +99,10 @@ class Hero extends Sprite {
 
         //Horizontal Friction
         if(this.isGrounded() && applyGroundedFriction) {
-            this.velocity.x *= 0.68
+            this.velocity.x *= (1 - this.groundFriction)
+        }
+        if(!this.isGrounded() && applyAerialFriction) {
+            this.velocity.x *= (1 - this.aerialFriction)
         }
 
         //Gravity
