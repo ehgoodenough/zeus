@@ -62,44 +62,46 @@ class Hero extends Sprite {
         var applyGroundedFriction = true
         var applyAerialFriction = true
 
-        if(Keyb.isDown("A") || Keyb.isDown("<left>")) {
-            if(this.isGrounded()) {
-                this.scale.x = +1
-                if(this.velocity.x >= -1 * this.groundSpeed) {
-                    this.velocity.x -= this.groundAcceleration * delta.f
-                    applyGroundedFriction = false
-                }
-                if(this.velocity.x < -1 * this.groundSpeed) {
-                    this.velocity.x = -1 * this.groundSpeed
-                }
-            } else {
-                if(this.velocity.x > -1 * this.airSpeed) {
-                    this.velocity.x -= this.aerialAcceleration * delta.f
-                    applyAerialFriction = false
-                }
-                if(this.velocity.x < -1* this.airSpeed) {
-                    this.velocity.x = -1 * this.airSpeed
+        if(!((Keyb.isDown("A") || Keyb.isDown("<left>"))
+        && (Keyb.isDown("D") || Keyb.isDown("<right>")))) {
+            if(Keyb.isDown("A") || Keyb.isDown("<left>")) {
+                if(this.isGrounded()) {
+                    this.scale.x = +1
+                    if(this.velocity.x >= -1 * this.groundSpeed) {
+                        this.velocity.x -= this.groundAcceleration * delta.f
+                        applyGroundedFriction = false
+                    }
+                    if(this.velocity.x < -1 * this.groundSpeed) {
+                        this.velocity.x = -1 * this.groundSpeed
+                    }
+                } else {
+                    if(this.velocity.x > -1 * this.airSpeed) {
+                        this.velocity.x -= this.aerialAcceleration * delta.f
+                        applyAerialFriction = false
+                    }
+                    if(this.velocity.x < -1* this.airSpeed) {
+                        this.velocity.x = -1 * this.airSpeed
+                    }
                 }
             }
-        }
-
-        if(Keyb.isDown("D") || Keyb.isDown("<right>")) {
-            if(this.isGrounded()) {
-                this.scale.x = -1
-                if(this.velocity.x <= +1 * this.groundSpeed) {
-                    this.velocity.x += this.groundAcceleration * delta.f
-                    applyGroundedFriction = false
-                }
-                if(this.velocity.x > +1 * this.groundSpeed) {
-                    this.velocity.x = +1 * this.groundSpeed
-                }
-            } else {
-                if(this.velocity.x < this.airSpeed) {
-                    this.velocity.x += this.aerialAcceleration * delta.f
-                    applyAerialFriction = false
-                }
-                if(this.velocity.x > +1 * this.airSpeed) {
-                    this.velocity.x = +1 * this.airSpeed
+            if(Keyb.isDown("D") || Keyb.isDown("<right>")) {
+                if(this.isGrounded()) {
+                    this.scale.x = -1
+                    if(this.velocity.x <= +1 * this.groundSpeed) {
+                        this.velocity.x += this.groundAcceleration * delta.f
+                        applyGroundedFriction = false
+                    }
+                    if(this.velocity.x > +1 * this.groundSpeed) {
+                        this.velocity.x = +1 * this.groundSpeed
+                    }
+                } else {
+                    if(this.velocity.x < this.airSpeed) {
+                        this.velocity.x += this.aerialAcceleration * delta.f
+                        applyAerialFriction = false
+                    }
+                    if(this.velocity.x > +1 * this.airSpeed) {
+                        this.velocity.x = +1 * this.airSpeed
+                    }
                 }
             }
         }
@@ -113,7 +115,6 @@ class Hero extends Sprite {
 
         if(Keyb.isDown("S") || Keyb.isDown("<down>")) {
             if(this.isGrounded() && this.currentPlatform.isPermeable) {
-                this.position.y += 0.0001
                 this.currentPlatform = null
             }
         }
@@ -126,10 +127,14 @@ class Hero extends Sprite {
             this.velocity.x *= (1 - this.aerialFriction)
         }
 
+        console.log(this.currentPlatform?this.currentPlatform.position.y:Infinity)
+
         //Gravity
         if(!this.isGrounded()) {
             if(this.velocity.y < this.gravityDampeningThreshold &&
-                (Keyb.isDown("W") || Keyb.isDown("<up>"))) {
+                ((Keyb.isDown("W") || Keyb.isDown("<up>")) ||
+                (this.position.y >= this.lastGroundedYPosition - this.minJumpHeight
+                && this.position.y <= this.lastGroundedYPosition))) {
                 //If anything else ever causes the character to move upward
                 //We may need to make sure that this gravity dampening
                 //Only happens during a jump action
@@ -145,6 +150,7 @@ class Hero extends Sprite {
         if(this.isGrounded()) {
             this.velocity.y = 0
             this.position.y = this.currentPlatform.position.y - this.feetOffset
+            this.lastGroundedYPosition = this.position.y
         }
 
         if(this.position.x < 0) {
