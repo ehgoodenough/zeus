@@ -127,8 +127,6 @@ class Hero extends Sprite {
             this.velocity.x *= (1 - this.aerialFriction)
         }
 
-        console.log(this.currentPlatform?this.currentPlatform.position.y:Infinity)
-
         //Gravity
         if(!this.isGrounded()) {
             if(this.velocity.y < this.gravityDampeningThreshold &&
@@ -147,9 +145,10 @@ class Hero extends Sprite {
         this.position.x += this.velocity.x * delta.f
         this.position.y += this.velocity.y * delta.f
 
+
         if(this.isGrounded()) {
             this.velocity.y = 0
-            this.position.y = this.currentPlatform.position.y - this.feetOffset
+            this.position.y = this.currentPlatform.getTopYAtX(this.position.x) - this.feetOffset
             this.lastGroundedYPosition = this.position.y
         }
 
@@ -163,7 +162,7 @@ class Hero extends Sprite {
         if(this.currentPlatform === null) {
             return false
         }
-        if(this.position.y >= this.currentPlatform.position.y - this.feetOffset) {
+        if(this.position.y >= this.currentPlatform.getTopYAtX(this.position.x) - this.feetOffset) {
             return true
         } else {
             return false
@@ -177,24 +176,38 @@ class Platform extends Sprite {
 
         this.anchor.x = 0.5
         this.scale.x = xScale
+        this.totalWidth = xScale
         this.position.x = xPos
 
         this.anchor.y = 0
         this.scale.y = yScale
+        this.totalHeight = xScale
         this.position.y = yPos
 
-        this.isPermeable = attributes.isPermeable
+        this.isPermeable = attributes.isPermeable?attributes.isPermeable:false
+        this.slope = attributes.slope?attributes.slope:0
+
+        if(this.slope === 1/3) {
+            this.texture = Pixi.Texture.fromImage(require("images/AngledPlatform.png"), false, Pixi.SCALE_MODES.NEAREST)
+            this.scale = {x: 1, y: 1}
+        }
 
         this.tint = 0x888888
     }
     isPointAboveMe(point) {
-        if(point.x >= this.position.x - this.scale.x/2
-        && point.x <= this.position.x + this.scale.x/2
-        && point.y <= this.position.y) {
+        if(point.x >= this.position.x - this.totalWidth/2
+        && point.x <= this.position.x + this.totalWidth/2
+        && point.y <= this.getTopYAtX(point.x)) {
             return true
         } else {
             return false
         }
+    }
+    getTopYAtX(x) {
+        var xOffsetFromCenter = x - this.position.x
+        var yOffsetAtCenter = Math.abs(Math.floor(this.width/2 * this.slope))
+        var yOffsetAtX = yOffsetAtCenter + xOffsetFromCenter * this.slope
+        return this.position.y + yOffsetAtX
     }
 }
 
@@ -207,11 +220,11 @@ class Level extends Sprite {
         this.anchor.x = 0
         this.anchor.y = 0
 
-        this.ground = this.addChild(new Platform(160, 160, 320, 20,
-        {isPermeable: false}))
+        this.ground = this.addChild(new Platform(160, 160, 320, 20, {}))
         this.platforms = [new Platform(60, 140, 60, 4, {isPermeable: true}),
             new Platform(220, 114, 100, 4, {isPermeable: true}),
             new Platform(245, 80, 50, 4, {isPermeable: true})]
+        this.platforms.push(new Platform(140, 95, 60, 4, {slope: 1/3, isPermeable: true}))
         for(let i = 0; i < this.platforms.length; i++) {
             this.addChild(this.platforms[i])
         }
@@ -227,12 +240,14 @@ class CollisionManager {
     update() {
         var nearestLandingPlatform = this.level.ground
         var heroHeight = this.hero.feetOffset
+        var maxAltitude = Infinity
+
         for(let i = 0; i < this.level.platforms.length; i ++) {
-            var maxAltitude = Infinity
-            if(this.level.platforms[i].position.y < maxAltitude
+            var platYAtPlayerX = this.level.platforms[i].getTopYAtX(this.hero.position.x)
+            if(platYAtPlayerX <= maxAltitude
                 && this.level.platforms[i].isPointAboveMe(
                 {x: this.hero.position.x, y: this.hero.position.y + heroHeight})) {
-                maxAltitude = this.level.platforms[i].position.y
+                maxAltitude = platYAtPlayerX
                 nearestLandingPlatform = this.level.platforms[i]
             }
         }
