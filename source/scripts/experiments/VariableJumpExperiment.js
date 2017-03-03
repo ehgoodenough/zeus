@@ -57,6 +57,7 @@ class Hero extends Sprite {
         this.lastGroundedYPosition = Infinity
         this.currentPlatform = null
         this.feetOffset = 20
+        this.hasJumpedSinceGrounded = true
     }
     update(delta) {
         var applyGroundedFriction = true
@@ -105,11 +106,15 @@ class Hero extends Sprite {
                 }
             }
         }
+        if(this.isGrounded()) {
+            this.hasJumpedSinceGrounded = false
+        }
 
         if(Keyb.isDown("W") || Keyb.isDown("<up>")) {
             if(this.isGrounded()) {
                 this.velocity.y += this.jumpForce
                 this.lastGroundedYPosition = this.position.y
+                this.hasJumpedSinceGrounded = true
             }
         }
 
@@ -144,7 +149,6 @@ class Hero extends Sprite {
 
         this.position.x += this.velocity.x * delta.f
         this.position.y += this.velocity.y * delta.f
-
 
         if(this.isGrounded()) {
             this.velocity.y = 0
@@ -205,9 +209,9 @@ class Platform extends Sprite {
     }
     getTopYAtX(x) {
         var xOffsetFromCenter = x - this.position.x
-        var yOffsetAtCenter = Math.abs(Math.floor(this.width/2 * this.slope))
+        var yOffsetAtCenter = Math.abs(this.width/2 * this.slope)
         var yOffsetAtX = yOffsetAtCenter + xOffsetFromCenter * this.slope
-        return this.position.y + yOffsetAtX
+        return Math.floor(this.position.y + yOffsetAtX)
     }
 }
 

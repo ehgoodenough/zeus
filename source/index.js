@@ -17,13 +17,15 @@ import BouncingBoxExperiment from "scripts/experiments/BouncingBoxExperiment.js"
 import TextExperiment from "scripts/experiments/TextExperiment.js"
 import InputPollingExperiment from "scripts/experiments/InputPollingExperiment.js"
 import VariableJumpExperiment from "scripts/experiments/VariableJumpExperiment"
+import LevelEditorExperiment from "scripts/experiments/LevelEditorExperiment"
 
 var experiments = [
     new BouncingBoxExperiment(),
 //    new AnimatedSpriteExperiment(),
     new TextExperiment(),
     new InputPollingExperiment(),
-    new VariableJumpExperiment()
+    new VariableJumpExperiment(),
+    new LevelEditorExperiment()
 ]
 experiments.reverse()
 
