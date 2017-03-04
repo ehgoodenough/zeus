@@ -192,7 +192,6 @@ class Platform extends Sprite {
         this.slope = attributes.slope?attributes.slope:0
 
         if(this.slope === 1/3) {
-            this.texture = Pixi.Texture.fromImage(require("images/AngledPlatform.png"), false, Pixi.SCALE_MODES.NEAREST)
             this.scale = {x: 1, y: 1}
         }
 
