@@ -4,6 +4,8 @@ import Keyb from "keyb"
 import Experiment from "scripts/experiments/Experiment.js"
 import Sprite from "scripts/models/Sprite.js"
 
+var pixelSrc = require("images/pixel.png")
+
 export default class ActionExperiment extends Experiment {
     constructor() {
         super()
@@ -49,7 +51,7 @@ class Platform extends Sprite {
 
         this.tint = 0x888888
     }
-    generateNewTexture() {
+    generateNewAntiAliasedTexture() {
 
         var canvas = document.createElement("canvas")
         canvas.width = this.totalWidth
@@ -67,6 +69,7 @@ class Platform extends Sprite {
         // ctx.fill()
 
         ctx.fillStyle = "#fff"
+        ctx.lineWidth = 2
         ctx.beginPath()
         if(this.slope > 0) {
             ctx.moveTo(0, 0)
@@ -81,6 +84,24 @@ class Platform extends Sprite {
             ctx.closePath()
         }
         ctx.fill()
+
+        this.texture = PIXI.Texture.fromCanvas(canvas)
+    }
+
+    generateNewTexture() {
+
+        var pixel = new Image()
+        pixel.src = pixelSrc
+        var canvas = document.createElement("canvas")
+        canvas.width = this.totalWidth
+        canvas.height = this.thickness + Math.abs(this.getYOffsetAtX(this.position.x))*2
+        var ctx = canvas.getContext("2d")
+        for(let i = 0; i < canvas.width; i++) {
+            for(let j = 0; j < this.thickness; j++) {
+                ctx.drawImage(pixel, i, this.getYOffsetAtX(this.position.x
+                    - this.totalWidth/2 + i) + j)
+            }
+        }
 
         this.texture = PIXI.Texture.fromCanvas(canvas)
     }
@@ -179,7 +200,7 @@ class ControlPoint extends Sprite {
                         - this.width/2,
                         y: this.subject.leftControlPoint.y - this.height/2}
                     rightCreationPoint = {x: this.subject.rightControlPoint.x,
-                            y: this.subject.rightControlPoint.y}
+                        y: this.subject.rightControlPoint.y}
                 } else {
                     var leftCreationPoint = {x: this.subject.leftControlPoint.x,
                         y: this.subject.leftControlPoint.y}
@@ -231,7 +252,6 @@ class Level extends Sprite {
             this.platforms[i].generateNewTexture()
             this.addChild(new ControlPoint(this.platforms[i], "Left"))
             this.addChild(new ControlPoint(this.platforms[i], "Right"))
-            //this.platforms[i].setYByRight(100)
         }
     }
 }
