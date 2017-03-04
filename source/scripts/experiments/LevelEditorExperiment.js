@@ -96,13 +96,13 @@ class Platform extends Sprite {
     getTopYAtX(x) {
         var xOffsetFromCenter = x - this.position.x
         var yOffsetAtCenter = Math.abs(this.totalWidth/2 * this.slope)
-        var yOffsetAtX = Math.floor(yOffsetAtCenter + xOffsetFromCenter * this.slope)
+        var yOffsetAtX = yOffsetAtCenter + xOffsetFromCenter * this.slope
         return this.position.y + yOffsetAtX
     }
     getYOffsetAtX(x) {
         var xOffsetFromCenter = x - this.position.x
         var yOffsetAtCenter = Math.abs(this.totalWidth/2 * this.slope)
-        var yOffsetAtX = Math.floor(yOffsetAtCenter + xOffsetFromCenter * this.slope)
+        var yOffsetAtX = yOffsetAtCenter + xOffsetFromCenter * this.slope
         return yOffsetAtX
     }
     setYByLeft(newY) {
@@ -119,7 +119,7 @@ class Platform extends Sprite {
         this.position.y = leftControlPoint.y < rightControlPoint.y?
             leftControlPoint.y:rightControlPoint.y
         this.totalWidth = rightControlPoint.x - leftControlPoint.x
-        this.position.x = rightControlPoint.x - this.width/2
+        this.position.x = rightControlPoint.x - this.totalWidth/2
         this.slope = (rightControlPoint.y - leftControlPoint.y)/
             (rightControlPoint.x - leftControlPoint.x)
         this.generateNewTexture()
@@ -130,14 +130,15 @@ class Platform extends Sprite {
     }
 }
 
+
+var CONTROL_POINT_TEXTURE = Pixi.Texture.fromImage(require("images/ControlPoint.png"), false, Pixi.SCALE_MODES.NEAREST)
 class ControlPoint extends Sprite {
     constructor(subject, side) {
-        super()
+        super(CONTROL_POINT_TEXTURE)
         this.subject = subject
         this.side = side
-        this.scale.x = 2
-        this.scale.y = 2
-        this.tint = 0x00AA00
+        this.scale.x = 1
+        this.scale.y = 1
         this.interactive = true
         this.anchor.y = 0
         this.preselected = false
@@ -145,9 +146,11 @@ class ControlPoint extends Sprite {
         if(this.side === "Left") {
             this.anchor.x = 0
             this.subject.leftControlPoint = this
+            this.position = this.subject.leftPlatformPoint
         } else if( this.side === "Right") {
             this.anchor.x = 1
             this.subject.rightControlPoint = this
+            this.position = this.subject.rightPlatformPoint
         }
         this.on("mousedown", function() {
             if(!this.preselected) {
@@ -169,14 +172,22 @@ class ControlPoint extends Sprite {
             if(this.selected) {
                 this.position.x = Math.floor(mouseData.data.global.x)
                 this.position.y = Math.floor(mouseData.data.global.y)
-                var leftCreationPoint = {x: this.subject.leftControlPoint.x
-                    - this.scale.x/2, y: this.subject.leftControlPoint.y -
-                    this.scale.y/2}
-                var rightCreationPoint = {x: this.subject.rightControlPoint.x
-                    + this.scale.x/2, y: this.subject.rightControlPoint.y -
-                    this.scale.y/2}
+                var leftCreationPoint
+                var rightCreationPoint
+                if(this.side === "Left") {
+                    leftCreationPoint = {x: this.subject.leftControlPoint.x
+                        - this.width/2,
+                        y: this.subject.leftControlPoint.y - this.height/2}
+                    rightCreationPoint = {x: this.subject.rightControlPoint.x,
+                            y: this.subject.rightControlPoint.y}
+                } else {
+                    var leftCreationPoint = {x: this.subject.leftControlPoint.x,
+                        y: this.subject.leftControlPoint.y}
+                    var rightCreationPoint = {x: this.subject.rightControlPoint.x
+                        + this.width/2,
+                        y: this.subject.rightControlPoint.y - this.height/2}
+                }
                 this.subject.recreate(leftCreationPoint, rightCreationPoint)
-                //console.log(this.subject.leftPlatformPoint.x)
             }
         })
         this.alignWithSubject()
@@ -209,11 +220,11 @@ class Level extends Sprite {
         this.anchor.y = 0
 
         this.platforms = [new Platform(160, 160, 320, 20, {}),
-            new Platform(60, 140, 60, 4, {isPermeable: true}),
-            new Platform(220, 114, 100, 4, {isPermeable: true}),
-            new Platform(245, 80, 50, 4, {isPermeable: true})]
-        this.platforms.push(new Platform(140, 94, 60, 4, {slope: 1/3, isPermeable: true}))
-        this.platforms.push(new Platform(240, 94, 60, 4, {slope: -1/9, isPermeable: true}))
+            new Platform(60, 140, 60, 8, {isPermeable: true}),
+            new Platform(220, 114, 100, 8, {isPermeable: true}),
+            new Platform(245, 80, 50, 8, {isPermeable: true})]
+        this.platforms.push(new Platform(140, 94, 60, 8, {slope: 1/3, isPermeable: true}))
+        this.platforms.push(new Platform(240, 94, 60, 8, {slope: -1/6, isPermeable: true}))
 
         for(let i = 0; i < this.platforms.length; i++) {
             this.addChild(this.platforms[i])
