@@ -56,11 +56,15 @@ class Platform extends Sprite {
         this.slope = attributes.slope?attributes.slope:0
 
         this.pixels = []
+        this.container = new PIXI.particles.ParticleContainer()
+        this.container.position.y -= 1
+        this.addChild(this.container)
 
         this.tint = 0x888888
         this.graphics = this.addChild(new PIXI.Graphics())
     }
     representWithPixels() {
+        let container = new PIXI.particles.ParticleContainer()
         for(let i = -1*this.totalWidth/2; i < this.totalWidth/2; i++) {
             var topOfPlatformAtX = this.getTopYAtX(i + this.position.x)
             for(let j = 0; j < this.thickness; j++) {
@@ -68,6 +72,7 @@ class Platform extends Sprite {
                     || i === -1*this.totalWidth/2 || i === this.totalWidth/2-1) {
                     this.pixels.push(this.addChild(new Pixel(i,
                         topOfPlatformAtX - this.position.y + j)))
+                    this.container.addChild(new Pixel(i, topOfPlatformAtX - this.position.y + j))
                 }
             }
         }
@@ -85,6 +90,46 @@ class Platform extends Sprite {
         this.graphics.lineTo(leftmostX, this.getYOffsetAtX(leftmostX + this.position.x) + thickness)
 
         this.graphics.endFill()
+    }
+    representWithTexture() {
+        var leftmostX = -1*this.totalWidth
+        var rightmostX = this.totalWidth
+        var thickness = this.thickness
+
+        var canvas = document.createElement("canvas")
+        document.body.appendChild(canvas)
+
+        canvas.width = this.totalWidth
+        canvas.height = this.thickness + Math.abs(this.getYOffsetAtX(this.position.x))*2
+        var ctx = canvas.getContext("2d")
+
+        //FILL BACKGROUND FOR DEBUGGING
+        ctx.fillStyle = "#000"
+        ctx.beginPath()
+        ctx.moveTo(0, 0)
+        ctx.lineTo(canvas.width, 0)
+        ctx.lineTo(canvas.width, canvas.height)
+        ctx.lineTo(0, canvas.height)
+        ctx.closePath()
+        ctx.fill()
+
+        ctx.fillStyle = "#fff"
+        ctx.beginPath()
+        if(this.slope > 0) {
+            ctx.moveTo(0, 0)
+            ctx.lineTo(canvas.width, canvas.height - this.thickness)
+            ctx.lineTo(canvas.width, canvas.height)
+            ctx.lineTo(0,  this.thickness)
+        } else {
+            ctx.moveTo(0, 0)
+            ctx.lineTo(canvas.width, canvas.height - this.thickness)
+            ctx.lineTo(canvas.width, canvas.height)
+            ctx.lineTo(0,  this.thickness)
+            ctx.closePath()
+        }
+        ctx.fill()
+
+        this.texture = PIXI.Texture.fromCanvas(canvas)
     }
     isPointAboveMe(point) {
         if(point.x >= this.position.x - this.totalWidth/2
@@ -122,10 +167,12 @@ class Level extends Sprite {
             new Platform(60, 140, 60, 4, {isPermeable: true}),
             new Platform(220, 114, 100, 4, {isPermeable: true}),
             new Platform(245, 80, 50, 4, {isPermeable: true})]
-        this.platforms.push(new Platform(140, 95, 60, 4, {slope: 1/3, isPermeable: true}))
+        this.platforms.push(new Platform(140, 94, 60, 4, {slope: 1/3, isPermeable: true}))
+        this.platforms.push(new Platform(240, 94, 60, 4, {slope: -1/3, isPermeable: true}))
+
         for(let i = 0; i < this.platforms.length; i++) {
             this.addChild(this.platforms[i])
-            this.platforms[i].representWithPixels()
+            this.platforms[i].representWithTexture()
         }
     }
 }
