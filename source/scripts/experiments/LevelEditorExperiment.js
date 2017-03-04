@@ -25,19 +25,6 @@ export default class ActionExperiment extends Experiment {
     }
 }
 
-class Pixel extends Sprite {
-    constructor(xPos, yPos) {
-        super()
-        this.position.x = xPos
-        this.position.y = yPos
-        this.scale.x = 1
-        this.scale.y = 1
-        this.anchor.y = 0
-
-        this.tint = 0x888888
-    }
-}
-
 class Platform extends Sprite {
     constructor(xPos, yPos, width, thickness, attributes) {
         super(Pixi.Texture.EMPTY)
@@ -61,15 +48,23 @@ class Platform extends Sprite {
             y: this.getYOffsetAtX(this.position.x + this.totalWidth/2)}
 
         this.tint = 0x888888
-        this.topLeftCornerCursor = this.addChild(new Cursor("TopLeft"))
-        this.topRightCornerCursor = this.addChild(new Cursor("TopRight"))
     }
-    representWithTexture() {
+    generateNewTexture() {
 
         var canvas = document.createElement("canvas")
         canvas.width = this.totalWidth
         canvas.height = this.thickness + Math.abs(this.getYOffsetAtX(this.position.x))*2
         var ctx = canvas.getContext("2d")
+
+        //black background for debugging
+        // ctx.fillStyle = "#000"
+        // ctx.beginPath()
+        // ctx.moveTo(0, 0)
+        // ctx.lineTo(canvas.width, 0)
+        // ctx.lineTo(canvas.width, canvas.height)
+        // ctx.lineTo(0,  canvas.height)
+        // ctx.closePath()
+        // ctx.fill()
 
         ctx.fillStyle = "#fff"
         ctx.beginPath()
@@ -120,37 +115,39 @@ class Platform extends Sprite {
         return [this.leftPlatformPoint, this.rightPlatformPoint,
             this.leftPlatformPoint + this.thickness, this.rightPlatformPoint + this.thickness]
     }
-    morph(activeCorner) {
-        var staticCornerPoint
-
-        if(activeCorner.cornerName === "TopLeft") {
-
-        } else if(activeCorner.cornerName === "TopRight") {
-
-        }
-        this.representWithTexture()
-    }
-    update() {
-        this.topLeftCornerCursor.update()
-        this.topRightCornerCursor.update()
+    recreate(leftControlPoint, rightControlPoint) {
+        this.position.y = leftControlPoint.y < rightControlPoint.y?
+            leftControlPoint.y:rightControlPoint.y
+        this.totalWidth = rightControlPoint.x - leftControlPoint.x
+        this.position.x = rightControlPoint.x - this.width/2
+        this.slope = (rightControlPoint.y - leftControlPoint.y)/
+            (rightControlPoint.x - leftControlPoint.x)
+        this.generateNewTexture()
+        this.leftPlatformPoint = {x: -1*this.totalWidth/2,
+            y: this.getYOffsetAtX(this.position.x - this.totalWidth/2)}
+        this.rightPlatformPoint = {x: this.totalWidth/2,
+            y: this.getYOffsetAtX(this.position.x + this.totalWidth/2)}
     }
 }
 
-class Cursor extends Sprite {
-    constructor(corner) {
+class ControlPoint extends Sprite {
+    constructor(subject, side) {
         super()
-        this.scale.x = 4
-        this.scale.y = 4
-        this.cornerName = corner
+        this.subject = subject
+        this.side = side
+        this.scale.x = 2
+        this.scale.y = 2
         this.tint = 0x00AA00
         this.interactive = true
         this.anchor.y = 0
         this.preselected = false
         this.selected = false
-        if(this.cornerName === "TopLeft") {
+        if(this.side === "Left") {
             this.anchor.x = 0
-        } else if( this.cornerName === "TopRight") {
+            this.subject.leftControlPoint = this
+        } else if( this.side === "Right") {
             this.anchor.x = 1
+            this.subject.rightControlPoint = this
         }
         this.on("mousedown", function() {
             if(!this.preselected) {
@@ -163,38 +160,42 @@ class Cursor extends Sprite {
         this.on("mouseup", function() {
             if(this.preselected) {
                 this.selected = true
+                this.anchor = {x: 0.5, y: 0.5}
             } else {
                 this.deselect()
             }
         })
         this.on("mousemove", function(mouseData) {
             if(this.selected) {
-                this.anchor = {x: 0.5, y: 0.5}
-                this.position.x = mouseData.data.global.x - this.parent.position.x
-                this.position.y = mouseData.data.global.y - this.parent.position.y
-                this.parent.morph(this)
+                this.position.x = Math.floor(mouseData.data.global.x)
+                this.position.y = Math.floor(mouseData.data.global.y)
+                var leftCreationPoint = {x: this.subject.leftControlPoint.x
+                    - this.scale.x/2, y: this.subject.leftControlPoint.y -
+                    this.scale.y/2}
+                var rightCreationPoint = {x: this.subject.rightControlPoint.x
+                    + this.scale.x/2, y: this.subject.rightControlPoint.y -
+                    this.scale.y/2}
+                this.subject.recreate(leftCreationPoint, rightCreationPoint)
+                //console.log(this.subject.leftPlatformPoint.x)
             }
         })
+        this.alignWithSubject()
     }
-    alignWithParentCorners() {
-        if(this.cornerName === "TopLeft") {
-            this.position = this.parent.leftPlatformPoint
+    alignWithSubject() {
+        if(this.side === "Left") {
+            this.position = {x: this.subject.leftPlatformPoint.x + this.subject.position.x,
+                y: this.subject.leftPlatformPoint.y + this.subject.position.y}
             this.anchor.x = 0
-        } else if( this.cornerName === "TopRight") {
-            this.position = this.parent.rightPlatformPoint
+        } else if( this.side === "Right") {
+            this.position = {x: this.subject.rightPlatformPoint.x + this.subject.position.x,
+                y: this.subject.rightPlatformPoint.y + this.subject.position.y}
             this.anchor.x = 1
         }
         this.anchor.y = 0
     }
     deselect() {
         this.selected = false
-        this.alignWithParentCorners()
-    }
-    update() {
-        if(!this.hasRunFirstUpdate) {
-            this.alignWithParentCorners()
-            this.hasRunFirstUpdate = true
-        }
+        this.alignWithSubject()
     }
 }
 
@@ -216,13 +217,10 @@ class Level extends Sprite {
 
         for(let i = 0; i < this.platforms.length; i++) {
             this.addChild(this.platforms[i])
-            this.platforms[i].representWithTexture()
+            this.platforms[i].generateNewTexture()
+            this.addChild(new ControlPoint(this.platforms[i], "Left"))
+            this.addChild(new ControlPoint(this.platforms[i], "Right"))
             //this.platforms[i].setYByRight(100)
-        }
-    }
-    update() {
-        for(let i = 0; i < this.platforms.length; i++) {
-            this.platforms[i].update()
         }
     }
 }
