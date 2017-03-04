@@ -55,63 +55,21 @@ class Platform extends Sprite {
         this.isPermeable = attributes.isPermeable?attributes.isPermeable:false
         this.slope = attributes.slope?attributes.slope:0
 
-        this.pixels = []
-        this.container = new PIXI.particles.ParticleContainer()
-        this.container.position.y -= 1
-        this.addChild(this.container)
+        this.leftPlatformPoint = {x: -1*this.totalWidth/2,
+            y: this.getYOffsetAtX(this.position.x - this.totalWidth/2)}
+        this.rightPlatformPoint = {x: this.totalWidth/2,
+            y: this.getYOffsetAtX(this.position.x + this.totalWidth/2)}
 
         this.tint = 0x888888
-        this.graphics = this.addChild(new PIXI.Graphics())
-    }
-    representWithPixels() {
-        let container = new PIXI.particles.ParticleContainer()
-        for(let i = -1*this.totalWidth/2; i < this.totalWidth/2; i++) {
-            var topOfPlatformAtX = this.getTopYAtX(i + this.position.x)
-            for(let j = 0; j < this.thickness; j++) {
-                if(j === 0 ||  j === this.thickness - 1
-                    || i === -1*this.totalWidth/2 || i === this.totalWidth/2-1) {
-                    this.pixels.push(this.addChild(new Pixel(i,
-                        topOfPlatformAtX - this.position.y + j)))
-                    this.container.addChild(new Pixel(i, topOfPlatformAtX - this.position.y + j))
-                }
-            }
-        }
-    }
-    representWithLines() {
-        this.graphics.beginFill(0x888888)
-
-        var leftmostX = -1*this.totalWidth/2
-        var rightmostX = this.totalWidth/2
-        var thickness = this.thickness
-
-        this.graphics.moveTo(leftmostX, this.getYOffsetAtX(leftmostX + this.position.x))
-        this.graphics.lineTo(rightmostX, this.getYOffsetAtX(rightmostX + this.position.x))
-        this.graphics.lineTo(rightmostX, this.getYOffsetAtX(rightmostX + this.position.x) + thickness)
-        this.graphics.lineTo(leftmostX, this.getYOffsetAtX(leftmostX + this.position.x) + thickness)
-
-        this.graphics.endFill()
+        this.topLeftCornerCursor = this.addChild(new Cursor("TopLeft"))
+        this.topRightCornerCursor = this.addChild(new Cursor("TopRight"))
     }
     representWithTexture() {
-        var leftmostX = -1*this.totalWidth
-        var rightmostX = this.totalWidth
-        var thickness = this.thickness
 
         var canvas = document.createElement("canvas")
-        document.body.appendChild(canvas)
-
         canvas.width = this.totalWidth
         canvas.height = this.thickness + Math.abs(this.getYOffsetAtX(this.position.x))*2
         var ctx = canvas.getContext("2d")
-
-        //FILL BACKGROUND FOR DEBUGGING
-        ctx.fillStyle = "#000"
-        ctx.beginPath()
-        ctx.moveTo(0, 0)
-        ctx.lineTo(canvas.width, 0)
-        ctx.lineTo(canvas.width, canvas.height)
-        ctx.lineTo(0, canvas.height)
-        ctx.closePath()
-        ctx.fill()
 
         ctx.fillStyle = "#fff"
         ctx.beginPath()
@@ -121,10 +79,10 @@ class Platform extends Sprite {
             ctx.lineTo(canvas.width, canvas.height)
             ctx.lineTo(0,  this.thickness)
         } else {
-            ctx.moveTo(0, 0)
-            ctx.lineTo(canvas.width, canvas.height - this.thickness)
-            ctx.lineTo(canvas.width, canvas.height)
-            ctx.lineTo(0,  this.thickness)
+            ctx.moveTo(0, canvas.height - this.thickness)
+            ctx.lineTo(canvas.width, 0)
+            ctx.lineTo(canvas.width, this.thickness)
+            ctx.lineTo(0,  canvas.height)
             ctx.closePath()
         }
         ctx.fill()
@@ -152,6 +110,92 @@ class Platform extends Sprite {
         var yOffsetAtX = Math.floor(yOffsetAtCenter + xOffsetFromCenter * this.slope)
         return yOffsetAtX
     }
+    setYByLeft(newY) {
+        this.position.y = newY - this.leftPlatformPoint.y
+    }
+    setYByRight(newY) {
+        this.position.y = newY - this.rightPlatformPoint.y
+    }
+    getCornerPoints() {
+        return [this.leftPlatformPoint, this.rightPlatformPoint,
+            this.leftPlatformPoint + this.thickness, this.rightPlatformPoint + this.thickness]
+    }
+    morph(activeCorner) {
+        var staticCornerPoint
+
+        if(activeCorner.cornerName === "TopLeft") {
+
+        } else if(activeCorner.cornerName === "TopRight") {
+
+        }
+        this.representWithTexture()
+    }
+    update() {
+        this.topLeftCornerCursor.update()
+        this.topRightCornerCursor.update()
+    }
+}
+
+class Cursor extends Sprite {
+    constructor(corner) {
+        super()
+        this.scale.x = 4
+        this.scale.y = 4
+        this.cornerName = corner
+        this.tint = 0x00AA00
+        this.interactive = true
+        this.anchor.y = 0
+        this.preselected = false
+        this.selected = false
+        if(this.cornerName === "TopLeft") {
+            this.anchor.x = 0
+        } else if( this.cornerName === "TopRight") {
+            this.anchor.x = 1
+        }
+        this.on("mousedown", function() {
+            if(!this.preselected) {
+                this.preselected = true
+            } else {
+                this.preselected = false
+                this.selected = false
+            }
+        })
+        this.on("mouseup", function() {
+            if(this.preselected) {
+                this.selected = true
+            } else {
+                this.deselect()
+            }
+        })
+        this.on("mousemove", function(mouseData) {
+            if(this.selected) {
+                this.anchor = {x: 0.5, y: 0.5}
+                this.position.x = mouseData.data.global.x - this.parent.position.x
+                this.position.y = mouseData.data.global.y - this.parent.position.y
+                this.parent.morph(this)
+            }
+        })
+    }
+    alignWithParentCorners() {
+        if(this.cornerName === "TopLeft") {
+            this.position = this.parent.leftPlatformPoint
+            this.anchor.x = 0
+        } else if( this.cornerName === "TopRight") {
+            this.position = this.parent.rightPlatformPoint
+            this.anchor.x = 1
+        }
+        this.anchor.y = 0
+    }
+    deselect() {
+        this.selected = false
+        this.alignWithParentCorners()
+    }
+    update() {
+        if(!this.hasRunFirstUpdate) {
+            this.alignWithParentCorners()
+            this.hasRunFirstUpdate = true
+        }
+    }
 }
 
 class Level extends Sprite {
@@ -168,11 +212,17 @@ class Level extends Sprite {
             new Platform(220, 114, 100, 4, {isPermeable: true}),
             new Platform(245, 80, 50, 4, {isPermeable: true})]
         this.platforms.push(new Platform(140, 94, 60, 4, {slope: 1/3, isPermeable: true}))
-        this.platforms.push(new Platform(240, 94, 60, 4, {slope: -1/3, isPermeable: true}))
+        this.platforms.push(new Platform(240, 94, 60, 4, {slope: -1/9, isPermeable: true}))
 
         for(let i = 0; i < this.platforms.length; i++) {
             this.addChild(this.platforms[i])
             this.platforms[i].representWithTexture()
+            //this.platforms[i].setYByRight(100)
+        }
+    }
+    update() {
+        for(let i = 0; i < this.platforms.length; i++) {
+            this.platforms[i].update()
         }
     }
 }
