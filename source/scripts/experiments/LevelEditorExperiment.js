@@ -174,23 +174,30 @@ class ControlPoint extends Sprite {
             this.position = this.subject.rightPlatformPoint
         }
         this.on("mousedown", function() {
-            if(!this.preselected) {
-                this.preselected = true
-            } else {
-                this.preselected = false
-                this.selected = false
-            }
+            // if(!this.preselected) {
+            //     this.preselected = true
+            // } else {
+            //     this.preselected = false
+            //     this.selected = false
+            // }
+            this.selected = true
+
         })
         this.on("mouseup", function() {
-            if(this.preselected) {
-                this.selected = true
-                this.anchor = {x: 0.5, y: 0.5}
-            } else {
+            // if(this.preselected) {
+            //     this.selected = true
+            //     this.anchor = {x: 0.5, y: 0.5}
+            // } else {
+            //     this.deselect()
+            // }
+                this.selected = false
                 this.deselect()
-            }
+            //}
         })
         this.on("mousemove", function(mouseData) {
             if(this.selected) {
+                this.anchor = {x: 0.5, y: 0.5}
+
                 this.position.x = Math.floor(mouseData.data.global.x)
                 this.position.y = Math.floor(mouseData.data.global.y)
                 var leftCreationPoint
