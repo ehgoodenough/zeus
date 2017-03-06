@@ -5,6 +5,7 @@ import Sprite from "scripts/models/Sprite.js"
 import Hero from "scripts/models/Hero.js"
 import Level from "scripts/models/world/Level.js"
 import CollisionManager from "scripts/models/world/CollisionManager.js"
+import Monster from "scripts/models/monsters/Monster.js"
 
 import pixelSrc from "images/pixel.png"
 
@@ -21,6 +22,8 @@ export default class Game extends Pixi.Container {
         var theHero = this.addChild(new Hero())
         var theLevel = this.addChild(new Level())
         this.collisionManager = new CollisionManager(theHero, theLevel)
+
+        this.addChild(new Monster())
     }
     update(delta) {
         this.children.forEach(function(child) {

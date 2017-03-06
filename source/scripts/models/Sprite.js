@@ -17,4 +17,7 @@ export default class Sprite extends Pixi.Sprite {
         this.anchor.x = 0.5
         this.anchor.y = 0.5
     }
+    get origin() {
+        return this.parent ? this.parent.origin || this.parent : this
+    }
 }
