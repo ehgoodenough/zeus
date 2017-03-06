@@ -1,3 +1,6 @@
+// THE EXPERIMENTS HAVE BEEN CONDUCTED, AND
+// ARE NOW DEPRECATED. DO NOT EDIT THESE.
+
 import * as Pixi from "pixi.js"
 
 export default class Experiment extends Pixi.Container {

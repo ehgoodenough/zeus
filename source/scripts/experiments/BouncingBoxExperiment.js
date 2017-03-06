@@ -1,3 +1,6 @@
+// THE EXPERIMENTS HAVE BEEN CONDUCTED, AND
+// ARE NOW DEPRECATED. DO NOT EDIT THESE.
+
 import Experiment from "scripts/experiments/Experiment.js"
 import Sprite from "scripts/models/Sprite.js"
 

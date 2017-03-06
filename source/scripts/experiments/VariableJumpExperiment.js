@@ -1,3 +1,6 @@
+// THE EXPERIMENTS HAVE BEEN CONDUCTED, AND
+// ARE NOW DEPRECATED. DO NOT EDIT THESE.
+
 import * as Pixi from "pixi.js"
 import Keyb from "keyb"
 
