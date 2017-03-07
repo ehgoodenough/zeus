@@ -30,7 +30,7 @@ export default class Hero extends Sprite {
         this.minJumpHeight = 20
         this.lastGroundedYPosition = Infinity
         this.currentPlatform = null
-        this.feetOffset = 20
+        this.feetOffset = 19
         this.hasJumpedSinceGrounded = true
     }
     update(delta) {
