@@ -30,7 +30,7 @@ export default class Hero extends Sprite {
         this.minJumpHeight = 20
         this.lastGroundedYPosition = Infinity
         this.currentPlatform = null
-        this.feetOffset = 20
+        this.feetOffset = 19
         this.hasJumpedSinceGrounded = true
     }
     update(delta) {
@@ -40,7 +40,7 @@ export default class Hero extends Sprite {
         if(!((Keyb.isDown("A") || Keyb.isDown("<left>"))
         && (Keyb.isDown("D") || Keyb.isDown("<right>")))) {
             if(Keyb.isDown("A") || Keyb.isDown("<left>")) {
-                if(this.isGrounded()) {
+                if(this.isGrounded) {
                     this.scale.x = +1
                     if(this.velocity.x >= -1 * this.groundSpeed) {
                         this.velocity.x -= this.groundAcceleration * delta.f
@@ -60,7 +60,7 @@ export default class Hero extends Sprite {
                 }
             }
             if(Keyb.isDown("D") || Keyb.isDown("<right>")) {
-                if(this.isGrounded()) {
+                if(this.isGrounded) {
                     this.scale.x = -1
                     if(this.velocity.x <= +1 * this.groundSpeed) {
                         this.velocity.x += this.groundAcceleration * delta.f
@@ -80,12 +80,12 @@ export default class Hero extends Sprite {
                 }
             }
         }
-        if(this.isGrounded()) {
+        if(this.isGrounded) {
             this.hasJumpedSinceGrounded = false
         }
 
         if(Keyb.isDown("W") || Keyb.isDown("<up>")) {
-            if(this.isGrounded()) {
+            if(this.isGrounded) {
                 this.velocity.y += this.jumpForce
                 this.lastGroundedYPosition = this.position.y
                 this.hasJumpedSinceGrounded = true
@@ -93,21 +93,21 @@ export default class Hero extends Sprite {
         }
 
         if(Keyb.isDown("S") || Keyb.isDown("<down>")) {
-            if(this.isGrounded() && this.currentPlatform.isPermeable) {
+            if(this.isGrounded && this.currentPlatform.isPermeable) {
                 this.currentPlatform = null
             }
         }
 
         //Horizontal Friction
-        if(this.isGrounded() && applyGroundedFriction) {
+        if(this.isGrounded && applyGroundedFriction) {
             this.velocity.x *= (1 - this.groundFriction)
         }
-        if(!this.isGrounded() && applyAerialFriction) {
+        if(!this.isGrounded && applyAerialFriction) {
             this.velocity.x *= (1 - this.aerialFriction)
         }
 
         //Gravity
-        if(!this.isGrounded()) {
+        if(!this.isGrounded) {
             if(this.velocity.y < this.gravityDampeningThreshold &&
                 ((Keyb.isDown("W") || Keyb.isDown("<up>")) ||
                 (this.position.y >= this.lastGroundedYPosition - this.minJumpHeight
@@ -124,7 +124,7 @@ export default class Hero extends Sprite {
         this.position.x += this.velocity.x * delta.f
         this.position.y += this.velocity.y * delta.f
 
-        if(this.isGrounded()) {
+        if(this.isGrounded) {
             this.velocity.y = 0
             this.position.y = this.currentPlatform.getTopYAtX(this.position.x) - this.feetOffset
             this.lastGroundedYPosition = this.position.y
@@ -136,7 +136,7 @@ export default class Hero extends Sprite {
             this.position.x = 320
         }
     }
-    isGrounded() {
+    get isGrounded() {
         if(this.currentPlatform === null) {
             return false
         }

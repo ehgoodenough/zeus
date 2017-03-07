@@ -19,8 +19,8 @@ export default class Game extends Pixi.Container {
         this.renderer.backgroundColor = 0x444444
 
         // Instantiate the entities.
-        this.hero = this.addChild(new Hero())
         this.level = this.addChild(new Level())
+        this.hero = this.addChild(new Hero())
         this.collisionManager = new CollisionManager(this.hero, this.level)
 
         this.addChild(new Monster())
