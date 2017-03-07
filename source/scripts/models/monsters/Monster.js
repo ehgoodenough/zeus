@@ -18,8 +18,8 @@ export default class Monster extends Sprite {
 
         this.state = "CHARGE"
 
-        this.forwardSpeed = 1
-        this.backwardSpeed = 0.75
+        this.forwardAcceleration = 1
+        this.backwardAcceleration = 0.75
         this.strikeSpeed = {x: 7, y: 6}
         this.prowlDistance = 100
         this.gravity = 0.65
@@ -74,11 +74,11 @@ export default class Monster extends Sprite {
         // from the hero, looking for an opportunity to strike.
         if(Math.abs(this.distance) - 10 > this.prowlDistance) {
             // If the wolf is too far from the hero, move it forwards.
-            this.velocity.x += this.forwardSpeed * this.direction * delta.f
+            this.velocity.x += this.forwardAcceleration * this.direction * delta.f
         } else if (Math.abs(this.distance) + 10 < this.prowlDistance) {
             // If the wolf is too close to the hero, move it backwards.
             // Moving backwards should be slightly slower than moving forwards.
-            this.velocity.x -= this.backwardSpeed * this.direction * delta.f
+            this.velocity.x -= this.backwardAcceleration * this.direction * delta.f
         }
 
         // Cap the horizontal velocity.
@@ -102,14 +102,14 @@ export default class Monster extends Sprite {
     }
     strike(delta) {
         if(this.isGrounded && this.velocity.x == 0) {
-            this.state = "PROWL" // Math.random() < 0.25 ? "CHARGE" : "PROWL"
+            this.state = "CHARGE" // Math.random() < 0.25 ? "CHARGE" : "PROWL"
         }
 
         // ADD THE HURTBOX/HITBOX HERO/MONSTER CHECKS
     }
     charge(delta) {
         // If the wolf is too far from the hero, move it forwards.
-        this.velocity.x += this.forwardSpeed * this.direction * delta.f
+        this.velocity.x += this.forwardAcceleration * this.direction * delta.f
 
         // If the wolf is close enough to the
         // hero, then strike out at the hero.

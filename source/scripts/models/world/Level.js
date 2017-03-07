@@ -15,12 +15,12 @@ export default class Level extends Sprite {
 
         this.platforms = [
             new Platform(160, 160, 320, 20, {}),
-            // new Platform(60, 140, 60, 8, {isPermeable: true}),
-            // new Platform(220, 114, 100, 8, {isPermeable: true}),
-            // new Platform(245, 80, 50, 8, {isPermeable: true})
+            new Platform(60, 140, 60, 8, {isPermeable: true}),
+            new Platform(220, 114, 100, 8, {isPermeable: true}),
+            new Platform(245, 80, 50, 8, {isPermeable: true})
         ]
-        // this.platforms.push(new Platform(140, 94, 60, 8, {slope: 1/3, isPermeable: true}))
-        // this.platforms.push(new Platform(240, 94, 60, 8, {slope: -1/6, isPermeable: true}))
+        this.platforms.push(new Platform(140, 94, 60, 8, {slope: 1/3, isPermeable: true}))
+        this.platforms.push(new Platform(240, 94, 60, 8, {slope: -1/6, isPermeable: true}))
 
         for(let i = 0; i < this.platforms.length; i++) {
             this.addChild(this.platforms[i])
