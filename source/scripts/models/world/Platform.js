@@ -4,82 +4,22 @@ import Sprite from "scripts/models/Sprite.js"
 import pixelSrc from "images/pixel.png"
 
 export default class Platform extends Sprite {
-    constructor(xPos, yPos, width, thickness, attributes) {
+    constructor(pointPairs) {
         super(Pixi.Texture.EMPTY)
 
         this.anchor.x = 0.5
+        this.anchor.y = 0.5
+
         this.scale.x = 1
-        this.totalWidth = width
-        this.position.x = xPos
-
-        this.anchor.y = 0
         this.scale.y = 1
-        this.thickness = thickness
-        this.position.y = yPos
 
-        this.isPermeable = attributes.isPermeable?attributes.isPermeable:false
-        this.slope = attributes.slope?attributes.slope:0
+        //this.totalWidth =
+        this.pointPairs = pointPairs
+        this.numOfSegments = pointPairs.length - 1
 
-        this.leftPlatformPoint = {x: -1*this.totalWidth/2,
-            y: this.getYOffsetAtX(this.position.x - this.totalWidth/2)}
-        this.rightPlatformPoint = {x: this.totalWidth/2,
-            y: this.getYOffsetAtX(this.position.x + this.totalWidth/2)}
-
+        this.setCenterAndDimensions()
+        this.generateNewTexture()
         this.tint = 0x888888
-    }
-    generateNewAntiAliasedTexture() {
-
-        var canvas = document.createElement("canvas")
-        canvas.width = this.totalWidth
-        canvas.height = this.thickness + Math.abs(this.getYOffsetAtX(this.position.x))*2
-        var ctx = canvas.getContext("2d")
-
-        //black background for debugging
-        // ctx.fillStyle = "#000"
-        // ctx.beginPath()
-        // ctx.moveTo(0, 0)
-        // ctx.lineTo(canvas.width, 0)
-        // ctx.lineTo(canvas.width, canvas.height)
-        // ctx.lineTo(0,  canvas.height)
-        // ctx.closePath()
-        // ctx.fill()
-
-        ctx.fillStyle = "#fff"
-        ctx.lineWidth = 2
-        ctx.beginPath()
-        if(this.slope > 0) {
-            ctx.moveTo(0, 0)
-            ctx.lineTo(canvas.width, canvas.height - this.thickness)
-            ctx.lineTo(canvas.width, canvas.height)
-            ctx.lineTo(0,  this.thickness)
-        } else {
-            ctx.moveTo(0, canvas.height - this.thickness)
-            ctx.lineTo(canvas.width, 0)
-            ctx.lineTo(canvas.width, this.thickness)
-            ctx.lineTo(0,  canvas.height)
-            ctx.closePath()
-        }
-        ctx.fill()
-
-        this.texture = PIXI.Texture.fromCanvas(canvas)
-    }
-
-    generateNewTexture() {
-
-        var pixel = new Image()
-        pixel.src = pixelSrc
-        var canvas = document.createElement("canvas")
-        canvas.width = this.totalWidth
-        canvas.height = this.thickness + Math.abs(this.getYOffsetAtX(this.position.x))*2
-        var ctx = canvas.getContext("2d")
-        for(let i = 0; i < canvas.width; i++) {
-            for(let j = 0; j < this.thickness; j++) {
-                ctx.drawImage(pixel, i, this.getYOffsetAtX(this.position.x
-                    - this.totalWidth/2 + i) + j)
-            }
-        }
-
-        this.texture = PIXI.Texture.fromCanvas(canvas)
     }
     isPointAboveMe(point) {
         if(point.x >= this.position.x - this.totalWidth/2
@@ -91,38 +31,102 @@ export default class Platform extends Sprite {
         }
     }
     getTopYAtX(x) {
-        var xOffsetFromCenter = x - this.position.x
-        var yOffsetAtCenter = Math.abs(this.totalWidth/2 * this.slope)
-        var yOffsetAtX = yOffsetAtCenter + xOffsetFromCenter * this.slope
-        return this.position.y + yOffsetAtX
+        var leftPoint
+        var rightPoint
+        var currentSegment = 0
+        var found = false
+        while(currentSegment < this.pointPairs.length - 1 && !found) {
+            leftPoint = this.pointPairs[currentSegment].top
+            rightPoint = this.pointPairs[currentSegment+1].top
+            if(x >= leftPoint.x && x <= rightPoint.x) {
+                found = true
+            } else {
+                currentSegment += 1
+            }
+        }
+        var slope = (rightPoint.y - leftPoint.y)/(rightPoint.x - leftPoint.x)
+        var topOffset = leftPoint.y + (x - leftPoint.x) * slope
+        return topOffset
     }
-    getYOffsetAtX(x) {
-        var xOffsetFromCenter = x - this.position.x
-        var yOffsetAtCenter = Math.abs(this.totalWidth/2 * this.slope)
-        var yOffsetAtX = yOffsetAtCenter + xOffsetFromCenter * this.slope
-        return yOffsetAtX
+    getBottomYAtX(x) {
+        var leftPoint
+        var rightPoint
+        var currentSegment = 0
+        var found = false
+        while(currentSegment < this.pointPairs.length - 1 && !found) {
+            leftPoint = this.pointPairs[currentSegment].bottom
+            rightPoint = this.pointPairs[currentSegment+1].bottom
+            if(x >= leftPoint.x && x <= rightPoint.x) {
+                found = true
+            } else {
+                currentSegment += 1
+            }
+        }
+        var slope = (rightPoint.y - leftPoint.y)/(rightPoint.x - leftPoint.x)
+        var topOffset = leftPoint.y + (x - leftPoint.x) * slope
+        return topOffset
     }
-    setYByLeft(newY) {
-        this.position.y = newY - this.leftPlatformPoint.y
+    generateNewTexture() {
+        var pixel = new Image()
+        pixel.src = pixelSrc
+        var canvas = document.createElement("canvas")
+        var spriteBoundaries = this.getSpriteBoundaries()
+        canvas.width = spriteBoundaries.maxX - spriteBoundaries.minX
+        canvas.height = spriteBoundaries.maxY - spriteBoundaries.minY
+        var ctx = canvas.getContext("2d")
+        for(let i = 0; i < canvas.width; i++) {
+            //draw top
+            var topYPosition = Math.floor(this.getTopYAtX(this.position.x + i
+                -canvas.width/2) - this.position.y + canvas.height/2)
+            var bottomYPosition = this.getBottomYAtX(this.position.x + i
+                -canvas.width/2) - this.position.y + canvas.height/2
+            for(let j = topYPosition; j < bottomYPosition; j++) {
+                ctx.drawImage(pixel, i, j)
+            }
+        }
+        this.texture = PIXI.Texture.fromCanvas(canvas)
     }
-    setYByRight(newY) {
-        this.position.y = newY - this.rightPlatformPoint.y
-    }
-    getCornerPoints() {
-        return [this.leftPlatformPoint, this.rightPlatformPoint,
-            this.leftPlatformPoint + this.thickness, this.rightPlatformPoint + this.thickness]
-    }
-    recreate(leftControlPoint, rightControlPoint) {
-        this.position.y = leftControlPoint.y < rightControlPoint.y?
-            leftControlPoint.y:rightControlPoint.y
-        this.totalWidth = rightControlPoint.x - leftControlPoint.x
-        this.position.x = rightControlPoint.x - this.totalWidth/2
-        this.slope = (rightControlPoint.y - leftControlPoint.y)/
-            (rightControlPoint.x - leftControlPoint.x)
+    recreate() {
+        this.setCenterAndDimensions()
         this.generateNewTexture()
-        this.leftPlatformPoint = {x: -1*this.totalWidth/2,
-            y: this.getYOffsetAtX(this.position.x - this.totalWidth/2)}
-        this.rightPlatformPoint = {x: this.totalWidth/2,
-            y: this.getYOffsetAtX(this.position.x + this.totalWidth/2)}
+    }
+    setCenterAndDimensions() {
+        var spriteBoundaries = this.getSpriteBoundaries()
+        var minX = spriteBoundaries.minX
+        var maxX = spriteBoundaries.maxX
+        var minY = spriteBoundaries.minY
+        var maxY = spriteBoundaries.maxY
+        var centerX = maxX - (maxX - minX) / 2
+        var centerY = maxY - (maxY - minY) / 2
+        this.position.x = centerX
+        this.position.y = centerY
+        this.spriteWidth = maxX - minX
+        this.spriteHeight = maxY - minY
+    }
+    getSpriteBoundaries() {
+        var minX = this.pointPairs[0].top.x
+        var maxX = this.pointPairs[this.pointPairs.length-1].top.x
+        var minY = this.pointPairs[0].top.y
+        var maxY = this.pointPairs[0].bottom.y
+        for(let i = 1; i < this.pointPairs.length; i++) {
+            if(this.pointPairs[i].top.y < minY) {
+                minY = this.pointPairs[i].top.y
+            }
+            if(this.pointPairs[i].bottom.y > maxY) {
+                maxY = this.pointPairs[i].bottom.y
+            }
+        }
+        return {minX: minX, maxX: maxX, minY: minY, maxY: maxY}
+    }
+    getRelativePointPairs() {
+        var relativePointPairs = []
+        for(let i = 0; i < this.pointPairs.length; i++) {
+            var relativeTop = {x: this.pointPairs[i].top.x - this.position.x,
+                y: this.pointPairs[i].top.y - this.position.y}
+            var relativeBottom = {x: this.pointPairs[i].bottom.x - this.position.x,
+                y: this.pointPairs[i].bottom.y - this.position.y}
+            relativePointPairs.push({top: relativeTop, bottom: relativeBottom})
+        }
+        return relativePointPairs
     }
 }
