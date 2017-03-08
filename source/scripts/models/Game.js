@@ -5,6 +5,7 @@ import Sprite from "scripts/models/Sprite.js"
 import Hero from "scripts/models/Hero.js"
 import Level from "scripts/models/world/Level.js"
 import CollisionManager from "scripts/models/world/CollisionManager.js"
+import Monster from "scripts/models/monsters/Monster.js"
 
 import pixelSrc from "images/pixel.png"
 
@@ -18,10 +19,11 @@ export default class Game extends Pixi.Container {
         this.renderer.backgroundColor = 0x444444
 
         // Instantiate the entities.
-        var theLevel = this.addChild(new Level())
+        this.level = this.addChild(new Level())
+        this.hero = this.addChild(new Hero())
+        this.collisionManager = new CollisionManager(this.hero, this.level)
 
-        var theHero = this.addChild(new Hero())
-        this.collisionManager = new CollisionManager(theHero, theLevel)
+        this.addChild(new Monster())
     }
     update(delta) {
         this.children.forEach(function(child) {
