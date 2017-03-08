@@ -5,8 +5,11 @@ import Platform from "scripts/models/world/Platform.js"
 import ControlPoint from "scripts/models/world/ControlPoint.js"
 
 export default class Level extends Sprite {
-    constructor() {
+    constructor(protolevel) {
         super(Pixi.Texture.EMPTY)
+
+        // TODO: Read from protolevel to get
+        // the data for all the points!!
 
         this.position.x = 0
         this.position.y = 0
