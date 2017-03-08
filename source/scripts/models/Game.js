@@ -23,7 +23,7 @@ export default class Game extends Pixi.Container {
         this.hero = this.addChild(new Hero())
         this.collisionManager = new CollisionManager(this.hero, this.level)
 
-        this.addChild(new Monster())
+        // this.addChild(new Monster())
     }
     update(delta) {
         this.children.forEach(function(child) {
