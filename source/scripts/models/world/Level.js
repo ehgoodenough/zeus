@@ -1,7 +1,6 @@
 import * as Pixi from "pixi.js"
 import Sprite from "scripts/models/Sprite.js"
 
-import OldPlatform from "scripts/models/world/OldPlatform.js"
 import Platform from "scripts/models/world/Platform.js"
 import ControlPoint from "scripts/models/world/ControlPoint.js"
 
