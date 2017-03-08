@@ -50,11 +50,9 @@ export default class Game extends Pixi.Container {
 
         // this.addChild(new Monster())
 
-        if(DevMode.isActive) {
-            // this.renderer.resize(this.renderer.width * 2, this.renderer.height * 2)
-            // this.width /= 2
-            // this.height /= 2
-        }
+        // if(DevMode.isActive) {
+        //     this.renderer.resize(this.renderer.width * 2, this.renderer.height * 2)
+        // }
     }
     update(delta) {
         this.children.forEach(function(child) {
