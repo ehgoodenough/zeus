@@ -1,5 +1,6 @@
 import * as Pixi from "pixi.js"
 import Sprite from "scripts/models/Sprite.js"
+import DevMode from "scripts/layers/DevMode.js"
 
 var CONTROL_POINT_TEXTURE = Pixi.Texture.fromImage(require("images/ControlPoint.png"), false, Pixi.SCALE_MODES.NEAREST)
 
@@ -26,7 +27,6 @@ export default class ControlPoint extends Sprite {
         })
         this.on("mouseup", function() {
             this.selected = false
-            this.deselect()
         })
         this.on("mousemove", function(mouseData) {
             if(this.selected) {
@@ -42,8 +42,7 @@ export default class ControlPoint extends Sprite {
                 this.subject.recreate()
             }
         })
-    }
-    deselect() {
-        this.selected = false
+
+        this.visible = DevMode.isActive
     }
 }

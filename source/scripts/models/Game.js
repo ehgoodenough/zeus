@@ -1,7 +1,8 @@
 import * as Pixi from "pixi.js"
 
-import Stash from "scripts/layers/Stash.js"
 import Sprite from "scripts/models/Sprite.js"
+import DevMode from "scripts/layers/DevMode.js"
+import Stash from "scripts/layers/Stash.js"
 
 import Hero from "scripts/models/Hero.js"
 import Level from "scripts/models/world/Level.js"
@@ -10,7 +11,7 @@ import Monster from "scripts/models/monsters/Monster.js"
 
 var protolevel = require("data/level.json")
 
-if("DEVMODE" == "DEVMODE") {
+if(DevMode.isActive) {
     window.Stash = Stash
 
     if(Stash.get("level") != undefined) {
