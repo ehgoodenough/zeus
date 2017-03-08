@@ -1,81 +1,37 @@
 import * as Pixi from "pixi.js"
 import Sprite from "scripts/models/Sprite.js"
+import Container from "scripts/models/Container.js"
 
 import Platform from "scripts/models/world/Platform.js"
 import ControlPoint from "scripts/models/world/ControlPoint.js"
 
-export default class Level extends Sprite {
-    constructor(protolevel) {
-        super(Pixi.Texture.EMPTY)
-
-        // TODO: Read from protolevel to get
-        // the data for all the points!!
-
-        this.position.x = 0
-        this.position.y = 0
-        this.anchor.x = 0
-        this.anchor.y = 0
+export default class Level extends Container {
+    constructor(protoLevel) {
+        super()
 
         this.controlPointSets = []
+        this.platforms = []
 
-        //control points will be generated from platform pointPair data
-        var controlPoints0 = [this.addChild(new ControlPoint(180, 120, null, 0, "top")),
-            this.addChild(new ControlPoint(180, 160, null, 0, "bottom")),
-            this.addChild(new ControlPoint(260, 140, null, 1, "top")),
-            this.addChild(new ControlPoint(260, 160, null, 1, "bottom")),
-            this.addChild(new ControlPoint(290, 120, null, 2, "top")),
-            this.addChild(new ControlPoint(290, 170, null, 2, "bottom"))]
-
-        var controlPoints1 = [this.addChild(new ControlPoint(40, 40, null, 0, "top")),
-            this.addChild(new ControlPoint(40, 50, null, 0, "bottom")),
-            this.addChild(new ControlPoint(60, 40, null, 1, "top")),
-            this.addChild(new ControlPoint(60, 70, null, 1, "bottom")),
-            this.addChild(new ControlPoint(100, 20, null, 2, "top")),
-            this.addChild(new ControlPoint(100, 70, null, 2, "bottom")),
-            this.addChild(new ControlPoint(120, 30, null, 3, "top")),
-            this.addChild(new ControlPoint(120, 60, null, 3, "bottom")),
-            this.addChild(new ControlPoint(150, 20, null, 4, "top")),
-            this.addChild(new ControlPoint(150, 100, null, 4, "bottom"))]
-
-        this.controlPointSets.push(controlPoints0, controlPoints1)
-        this.introduceControlPoints()
-
-        var pointPairs0 = []
-        for(let i = 0; i < controlPoints0.length; i+=2) {
-            pointPairs0.push({top: {x: controlPoints0[i].position.x,
-                y: controlPoints0[i].position.y },
-                bottom: {x: controlPoints0[i+1].position.x,
-                    y: controlPoints0[i+1].position.y}})
-        }
-        var pointPairs1 = []
-        for(let i = 0; i < controlPoints1.length; i+=2) {
-            pointPairs1.push({top: {x: controlPoints1[i].position.x,
-                y: controlPoints1[i].position.y },
-                bottom: {x: controlPoints1[i+1].position.x,
-                    y: controlPoints1[i+1].position.y}})
-        }
-
-        //new OldPlatform(160, 160, 320, 20, {})
-        this.platforms = [new Platform(pointPairs0), new Platform(pointPairs1)]
-
-        for(let i = 0; i < controlPoints0.length; i+=2) {
-            controlPoints0[i].subject = this.platforms[0]
-            controlPoints0[i+1].subject = this.platforms[0]
-        }
-        for(let i = 0; i < controlPoints1.length; i+=2) {
-            controlPoints1[i].subject = this.platforms[1]
-            controlPoints1[i+1].subject = this.platforms[1]
-        }
-
-        for(let i = 0; i < this.platforms.length; i++) {
-            this.addChild(this.platforms[i])
-            for(let j = 0; j <= this.platforms[i].numOfSegments; j++) {
-
+        //iterate through platforms
+        for(let i = 0; i < protoLevel.length; i++) {
+            this.platforms.push(this.addChild(new Platform(protoLevel[i])))
+            var controlPoints = []
+            //iterate through pointPairs
+            for(let j = 0; j < protoLevel[i].length; j++) {
+                var currentPair = protoLevel[i][j]
+                var topPoint = new ControlPoint (currentPair.top.x,
+                    currentPair.top.y, null, j, "top")
+                topPoint.subject = this.platforms[i]
+                var bottomPoint = new ControlPoint(currentPair.bottom.x,
+                    currentPair.bottom.y, null, j, "bottom")
+                bottomPoint.subject = this.platforms[i]
+                this.addChild(topPoint)
+                this.addChild(bottomPoint)
+                controlPoints.push(topPoint, bottomPoint)
             }
-            //this.platforms[0].generateNewTexture()
+            this.controlPointSets.push(controlPoints)
         }
-
-        this.children.reverse()
+        this.introduceControlPoints()
     }
     introduceControlPoints() {
         for(let i = 0; i < this.controlPointSets.length; i++) {
@@ -89,5 +45,10 @@ export default class Level extends Sprite {
                 }
             }
         }
+    }
+    toJSON() {
+        return this.platforms.map(function(platform) {
+            return platform.toJSON()
+        })
     }
 }

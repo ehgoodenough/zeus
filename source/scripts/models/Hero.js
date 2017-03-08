@@ -125,7 +125,7 @@ export default class Hero extends Sprite {
         this.position.y += this.velocity.y * delta.f
 
         // Move along the world.
-        if(this.isGrounded) {
+        if(this.isGrounded && this.currentPlatform) {
             this.velocity.y = 0
             this.position.y = this.currentPlatform.getTopYAtX(this.position.x) - this.feetOffset
             this.lastGroundedYPosition = this.position.y
@@ -142,7 +142,7 @@ export default class Hero extends Sprite {
         if(this.currentPlatform === null) {
             return false
         }
-        if(this.position.y >= this.currentPlatform.getTopYAtX(this.position.x) - this.feetOffset) {
+        if(this.currentPlatform && this.position.y >= this.currentPlatform.getTopYAtX(this.position.x) - this.feetOffset) {
             return true
         } else {
             return false

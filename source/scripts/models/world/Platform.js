@@ -129,4 +129,7 @@ export default class Platform extends Sprite {
         }
         return relativePointPairs
     }
+    toJSON() {
+        return this.pointPairs
+    }
 }

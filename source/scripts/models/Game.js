@@ -55,6 +55,8 @@ export default class Game extends Pixi.Container {
             // this.width /= 2
             // this.height /= 2
         }
+
+        //Stash.set("level", this.level.toJSON())
     }
     update(delta) {
         this.children.forEach(function(child) {
@@ -68,11 +70,14 @@ export default class Game extends Pixi.Container {
         }
 
         // Move the camera to follow the player.
-        // this.position.x = -1 * (this.hero.position.x - (this.width / 2))
-        // this.position.y = -1 * (this.hero.position.y - (this.height / 2))
+        this.position.x = -1 * (this.hero.position.x - (this.width / 2))
+        this.position.y = -1 * (this.hero.position.y - (this.height / 2))
         // TODO: Tween this.
     }
     render() {
         this.renderer.render(this)
+    }
+    stashLevel() {
+        Stash.set("level", this.level.toJSON())
     }
 }

@@ -32,14 +32,15 @@ export default class ControlPoint extends Sprite {
             if(this.selected) {
                 this.anchor = {x: 0.5, y: 0.5}
 
-                this.position.x = Math.floor(mouseData.data.global.x)
-                this.position.y = Math.floor(mouseData.data.global.y)
+                this.position.x = Math.floor(mouseData.data.global.x) - this.origin.position.x
+                this.position.y = Math.floor(mouseData.data.global.y) - this.origin.position.y
                 this.partner.position.x = this.position.x
 
                 this.subject.pointPairs[index][side].y = this.position.y
                 this.subject.pointPairs[index]["top"].x = this.position.x
                 this.subject.pointPairs[index]["bottom"].x = this.position.x
                 this.subject.recreate()
+                this.parent.parent.stashLevel()
             }
         })
 
