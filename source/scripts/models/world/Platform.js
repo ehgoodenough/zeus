@@ -25,8 +25,8 @@ export default class Platform extends Sprite {
         this.tint = 0x888888
     }
     isPointAboveMe(point) {
-        if(point.x >= this.position.x - this.totalWidth/2
-        && point.x <= this.position.x + this.totalWidth/2
+        if(point.x >= this.position.x - this.spriteWidth/2
+        && point.x <= this.position.x + this.spriteWidth/2
         && point.y <= this.getTopYAtX(point.x)) {
             return true
         } else {
@@ -49,7 +49,11 @@ export default class Platform extends Sprite {
         }
         var slope = (rightPoint.y - leftPoint.y)/(rightPoint.x - leftPoint.x)
         var topOffset = leftPoint.y + (x - leftPoint.x) * slope
-        return topOffset
+        if(found) {
+            return topOffset
+        } else {
+            return Infinity
+        }
     }
     getBottomYAtX(x) {
         var leftPoint
