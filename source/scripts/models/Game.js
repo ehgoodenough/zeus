@@ -4,6 +4,7 @@ import Keyb from "keyb"
 import Sprite from "scripts/models/Sprite.js"
 import DevMode from "scripts/layers/DevMode.js"
 import Stash from "scripts/layers/Stash.js"
+import Container from "scripts/models/Container.js"
 
 import Hero from "scripts/models/Hero.js"
 import Level from "scripts/models/world/Level.js"
@@ -34,7 +35,7 @@ if(DevMode.isActive) {
 // The Game Class //
 ///////////////////
 
-export default class Game extends Pixi.Container {
+export default class Game extends Container {
     constructor() {
         super()
 
@@ -49,10 +50,12 @@ export default class Game extends Pixi.Container {
         this.collisionManager = new CollisionManager(this.hero, this.level)
 
         // this.addChild(new Monster())
-
+        
         // if(DevMode.isActive) {
         //     this.renderer.resize(this.renderer.width * 2, this.renderer.height * 2)
         // }
+
+        //Stash.set("level", this.level.toJSON())
     }
     update(delta) {
         this.children.forEach(function(child) {
@@ -66,11 +69,14 @@ export default class Game extends Pixi.Container {
         }
 
         // Move the camera to follow the player.
-        // this.position.x = -1 * (this.hero.position.x - (this.width / 2))
-        // this.position.y = -1 * (this.hero.position.y - (this.height / 2))
+        this.position.x = -1 * (this.hero.position.x - (this.renderer.width / 2))
+        this.position.y = -1 * (this.hero.position.y - (this.renderer.height / 2))
         // TODO: Tween this.
     }
     render() {
         this.renderer.render(this)
+    }
+    stashLevel() {
+        Stash.set("level", this.level.toJSON())
     }
 }

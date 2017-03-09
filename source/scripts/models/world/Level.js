@@ -1,81 +1,42 @@
 import * as Pixi from "pixi.js"
 import Sprite from "scripts/models/Sprite.js"
+import Container from "scripts/models/Container.js"
+import Input from "scripts/layers/Input.js"
 
 import Platform from "scripts/models/world/Platform.js"
 import ControlPoint from "scripts/models/world/ControlPoint.js"
+import DeleteButton from "scripts/models/world/Deletebutton.js"
 
-export default class Level extends Sprite {
+import DevMode from "scripts/layers/DevMode.js"
+
+export default class Level extends Container {
     constructor(protolevel) {
-        super(Pixi.Texture.EMPTY)
-
-        // TODO: Read from protolevel to get
-        // the data for all the points!!
-
-        this.position.x = 0
-        this.position.y = 0
-        this.anchor.x = 0
-        this.anchor.y = 0
+        super()
 
         this.controlPointSets = []
+        this.platforms = []
 
-        //control points will be generated from platform pointPair data
-        var controlPoints0 = [this.addChild(new ControlPoint(180, 120, null, 0, "top")),
-            this.addChild(new ControlPoint(180, 160, null, 0, "bottom")),
-            this.addChild(new ControlPoint(260, 140, null, 1, "top")),
-            this.addChild(new ControlPoint(260, 160, null, 1, "bottom")),
-            this.addChild(new ControlPoint(290, 120, null, 2, "top")),
-            this.addChild(new ControlPoint(290, 170, null, 2, "bottom"))]
-
-        var controlPoints1 = [this.addChild(new ControlPoint(40, 40, null, 0, "top")),
-            this.addChild(new ControlPoint(40, 50, null, 0, "bottom")),
-            this.addChild(new ControlPoint(60, 40, null, 1, "top")),
-            this.addChild(new ControlPoint(60, 70, null, 1, "bottom")),
-            this.addChild(new ControlPoint(100, 20, null, 2, "top")),
-            this.addChild(new ControlPoint(100, 70, null, 2, "bottom")),
-            this.addChild(new ControlPoint(120, 30, null, 3, "top")),
-            this.addChild(new ControlPoint(120, 60, null, 3, "bottom")),
-            this.addChild(new ControlPoint(150, 20, null, 4, "top")),
-            this.addChild(new ControlPoint(150, 100, null, 4, "bottom"))]
-
-        this.controlPointSets.push(controlPoints0, controlPoints1)
-        this.introduceControlPoints()
-
-        var pointPairs0 = []
-        for(let i = 0; i < controlPoints0.length; i+=2) {
-            pointPairs0.push({top: {x: controlPoints0[i].position.x,
-                y: controlPoints0[i].position.y },
-                bottom: {x: controlPoints0[i+1].position.x,
-                    y: controlPoints0[i+1].position.y}})
-        }
-        var pointPairs1 = []
-        for(let i = 0; i < controlPoints1.length; i+=2) {
-            pointPairs1.push({top: {x: controlPoints1[i].position.x,
-                y: controlPoints1[i].position.y },
-                bottom: {x: controlPoints1[i+1].position.x,
-                    y: controlPoints1[i+1].position.y}})
-        }
-
-        //new OldPlatform(160, 160, 320, 20, {})
-        this.platforms = [new Platform(pointPairs0), new Platform(pointPairs1)]
-
-        for(let i = 0; i < controlPoints0.length; i+=2) {
-            controlPoints0[i].subject = this.platforms[0]
-            controlPoints0[i+1].subject = this.platforms[0]
-        }
-        for(let i = 0; i < controlPoints1.length; i+=2) {
-            controlPoints1[i].subject = this.platforms[1]
-            controlPoints1[i+1].subject = this.platforms[1]
-        }
-
-        for(let i = 0; i < this.platforms.length; i++) {
-            this.addChild(this.platforms[i])
-            for(let j = 0; j <= this.platforms[i].numOfSegments; j++) {
-
+        //create platforms from protolevel
+        for(let i = 0; i < protolevel.length; i++) {
+            this.platforms.push(this.addChild(new Platform(protolevel[i])))
+            if(DevMode.isActive) {
+                this.generateControlPoints(this.platforms[i])
             }
-            //this.platforms[0].generateNewTexture()
         }
 
-        this.children.reverse()
+
+        this.inputs = {
+            one: new Input(["1"]),
+            two: new Input(["2"]),
+            three: new Input(["3"]),
+            four: new Input(["4"]),
+            five: new Input(["5"]),
+            p: new Input(["P"])
+        }
+        this.createdPlatformSincePress = false
+
+        this.trash = []
+
     }
     introduceControlPoints() {
         for(let i = 0; i < this.controlPointSets.length; i++) {
@@ -88,6 +49,93 @@ export default class Level extends Sprite {
                     = this.controlPointSets[i][j-1]
                 }
             }
+        }
+    }
+    toJSON() {
+        return this.platforms.map(function(platform) {
+            return platform.toJSON()
+        })
+    }
+    update(delta) {
+        if(this.trash.length > 0) {
+            this.emptyTrash()
+        }
+        if(this.inputs.p.isDown()) {
+            if(!this.createdPlatformSincePress) {
+                if(this.inputs.one.isDown()) {
+                    this.createNewPlatformAtCenter(1)
+                    this.createdPlatformSincePress = true
+                } else if(this.inputs.two.isDown()) {
+                    this.createNewPlatformAtCenter(2)
+                    this.createdPlatformSincePress = true
+                } else if(this.inputs.three.isDown()) {
+                    this.createNewPlatformAtCenter(3)
+                    this.createdPlatformSincePress = true
+                } else if(this.inputs.four.isDown()) {
+                    this.createNewPlatformAtCenter(4)
+                    this.createdPlatformSincePress = true
+                } else if(this.inputs.five.isDown()) {
+                    this.createNewPlatformAtCenter(5)
+                    this.createdPlatformSincePress = true
+                }
+            }
+        } else {
+            this.createdPlatformSincePress = false
+        }
+    }
+    emptyTrash() {
+        for(let i = 0; i < this.trash.length; i++) {
+            //If it's a platform's delete button, remove that platform
+            //from our list of platforms, and destory the platform, too
+            if(this.trash[i] instanceof DeleteButton) {
+                var subject = this.trash[i].subject
+                this.platforms = this.platforms.filter(function(platform) {
+                    return platform !== subject
+                })
+                this.controlPointSets = this.controlPointSets.filter(
+                    function(controlPointSet) {
+                        return controlPointSet[0].subject !== subject
+                    })
+                subject.destroy()
+            }
+            this.trash[i].destroy()
+            this.origin.stashLevel()
+        }
+        this.trash = []
+    }
+    generateControlPoints(platform) {
+        var controlPoints = []
+        for(let i = 0; i < platform.pointPairs.length; i++) {
+            var currentPair = platform.pointPairs[i]
+            var topPoint = new ControlPoint (currentPair.top.x,
+                currentPair.top.y, platform, i, "top")
+            var bottomPoint = new ControlPoint(currentPair.bottom.x,
+                currentPair.bottom.y, platform, i, "bottom")
+            topPoint.partner = bottomPoint
+            bottomPoint.partner = topPoint
+            this.addChild(topPoint)
+            this.addChild(bottomPoint)
+            controlPoints.push(topPoint, bottomPoint)
+            platform.controlPoints.push(topPoint, bottomPoint)
+        }
+        var deleteButton = new DeleteButton(platform)
+        this.controlPointSets.push(controlPoints)
+    }
+    createNewPlatformAtCenter(numSegments) {
+        var center = this.origin.hero.position
+        var pointKerning = 20
+        var pointVertSpacing = 10
+        var pointPairs = []
+        for(let i = 0; i < numSegments + 1; i++) {
+            var newTop = {x: center.x + pointKerning*i - numSegments*pointKerning/2,
+                y: center.y - pointVertSpacing/2}
+            var newBottom = {x: center.x + pointKerning*i - numSegments*pointKerning/2,
+                y: center.y + pointVertSpacing/2}
+            pointPairs.push({top: newTop, bottom: newBottom})
+        }
+        this.platforms.push(this.addChild(new Platform(pointPairs)))
+        if(DevMode.isActive) {
+            this.generateControlPoints(this.platforms[this.platforms.length-1])
         }
     }
 }

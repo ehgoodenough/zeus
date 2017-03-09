@@ -125,24 +125,24 @@ export default class Hero extends Sprite {
         this.position.y += this.velocity.y * delta.f
 
         // Move along the world.
-        if(this.isGrounded) {
+        if(this.isGrounded && this.currentPlatform) {
             this.velocity.y = 0
             this.position.y = this.currentPlatform.getTopYAtX(this.position.x) - this.feetOffset
             this.lastGroundedYPosition = this.position.y
         }
 
         // Collide with the edges of the screen.
-        if(this.position.x < 0) {
-            this.position.x = 0
-        } if(this.position.x > 320) {
-            this.position.x = 320
-        }
+        // if(this.position.x < 0) {
+        //     this.position.x = 0
+        // } if(this.position.x > 320) {
+        //     this.position.x = 320
+        // }
     }
     get isGrounded() {
         if(this.currentPlatform === null) {
             return false
         }
-        if(this.position.y >= this.currentPlatform.getTopYAtX(this.position.x) - this.feetOffset) {
+        if(this.currentPlatform && this.position.y >= this.currentPlatform.getTopYAtX(this.position.x) - this.feetOffset) {
             return true
         } else {
             return false
