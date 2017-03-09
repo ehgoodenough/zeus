@@ -4,6 +4,7 @@ import Keyb from "keyb"
 import Sprite from "scripts/models/Sprite.js"
 import DevMode from "scripts/layers/DevMode.js"
 import Stash from "scripts/layers/Stash.js"
+import Container from "scripts/models/Container.js"
 
 import Hero from "scripts/models/Hero.js"
 import Level from "scripts/models/world/Level.js"
@@ -34,7 +35,7 @@ if(DevMode.isActive) {
 // The Game Class //
 ///////////////////
 
-export default class Game extends Pixi.Container {
+export default class Game extends Container {
     constructor() {
         super()
 

@@ -40,7 +40,7 @@ export default class ControlPoint extends Sprite {
                 this.subject.pointPairs[index]["top"].x = this.position.x
                 this.subject.pointPairs[index]["bottom"].x = this.position.x
                 this.subject.recreate()
-                this.parent.parent.stashLevel()
+                this.origin.stashLevel()
             }
         })
     }
