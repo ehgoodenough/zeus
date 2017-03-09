@@ -9,39 +9,22 @@ import DeleteButton from "scripts/models/world/Deletebutton.js"
 import DevMode from "scripts/layers/DevMode.js"
 
 export default class Level extends Container {
-    constructor(protoLevel) {
+    constructor(protolevel) {
         super()
 
         this.controlPointSets = []
         this.platforms = []
 
-        this.trash = []
-        //iterate through platforms
-        for(let i = 0; i < protoLevel.length; i++) {
-            this.platforms.push(this.addChild(new Platform(protoLevel[i])))
+        //create platforms from protolevel
+        for(let i = 0; i < protolevel.length; i++) {
+            this.platforms.push(this.addChild(new Platform(protolevel[i])))
             if(DevMode.isActive) {
-                var controlPoints = []
-                //iterate through pointPairs
-                for(let j = 0; j < protoLevel[i].length; j++) {
-                    var currentPair = protoLevel[i][j]
-                    var topPoint = new ControlPoint (currentPair.top.x,
-                        currentPair.top.y, null, j, "top")
-                    topPoint.subject = this.platforms[i]
-                    var bottomPoint = new ControlPoint(currentPair.bottom.x,
-                        currentPair.bottom.y, null, j, "bottom")
-                    bottomPoint.subject = this.platforms[i]
-                    this.addChild(topPoint)
-                    this.addChild(bottomPoint)
-                    controlPoints.push(topPoint, bottomPoint)
-                    this.platforms[i].controlPoints.push(topPoint, bottomPoint)
-                }
-            }
-            if(DevMode.isActive) {
-                var deleteButton = new DeleteButton(this.platforms[i])
-                this.controlPointSets.push(controlPoints)
+                this.generateControlPoints(this.platforms[i])
             }
         }
-        this.introduceControlPoints()
+
+        this.trash = []
+
     }
     introduceControlPoints() {
         for(let i = 0; i < this.controlPointSets.length; i++) {
@@ -79,11 +62,28 @@ export default class Level extends Container {
                     function(controlPointSet) {
                         return controlPointSet[0].subject !== subject
                     })
-                console.log(this.controlPointSets)
                 subject.destroy()
             }
             this.trash[i].destroy()
         }
         this.trash = []
+    }
+    generateControlPoints(platform) {
+        var controlPoints = []
+        for(let i = 0; i < platform.pointPairs.length; i++) {
+            var currentPair = platform.pointPairs[i]
+            var topPoint = new ControlPoint (currentPair.top.x,
+                currentPair.top.y, platform, i, "top")
+            var bottomPoint = new ControlPoint(currentPair.bottom.x,
+                currentPair.bottom.y, platform, i, "bottom")
+            topPoint.partner = bottomPoint
+            bottomPoint.partner = topPoint
+            this.addChild(topPoint)
+            this.addChild(bottomPoint)
+            controlPoints.push(topPoint, bottomPoint)
+            platform.controlPoints.push(topPoint, bottomPoint)
+        }
+        var deleteButton = new DeleteButton(platform)
+        this.controlPointSets.push(controlPoints)
     }
 }
