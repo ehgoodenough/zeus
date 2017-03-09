@@ -2,14 +2,15 @@ import * as Pixi from "pixi.js"
 import Keyb from "keyb"
 
 import Sprite from "scripts/models/Sprite.js"
-import DevMode from "scripts/layers/DevMode.js"
-import Stash from "scripts/layers/Stash.js"
 import Container from "scripts/models/Container.js"
 
-import Hero from "scripts/models/Hero.js"
-import Level from "scripts/models/world/Level.js"
-import CollisionManager from "scripts/models/world/CollisionManager.js"
+import DevMode from "scripts/layers/DevMode.js"
+import Stash from "scripts/layers/Stash.js"
+
+import HeroHealthBar from "scripts/models/hud/HeroHealthBar.js"
 import Monster from "scripts/models/monsters/Monster.js"
+
+import Scene from "scripts/models/Scene.js"
 
 ////////////////////
 // The Game Data //
@@ -44,34 +45,23 @@ export default class Game extends Container {
         this.renderer = Pixi.autoDetectRenderer(320, 180)
         this.renderer.backgroundColor = 0x444444
 
-        // Instantiate the entities.
-        this.level = this.addChild(new Level(protolevel))
-        this.hero = this.addChild(new Hero())
-        this.collisionManager = new CollisionManager(this.hero, this.level)
-
-        // this.addChild(new Monster())
-        
-        // if(DevMode.isActive) {
-        //     this.renderer.resize(this.renderer.width * 2, this.renderer.height * 2)
-        // }
-
-        //Stash.set("level", this.level.toJSON())
+        this.addChild(new Scene(protolevel))
+        this.addChild(new HeroHealthBar())
     }
     update(delta) {
-        this.children.forEach(function(child) {
+        this.children.forEach((child) => {
+            // TODO: Make this recursive.
+            if(child.children != undefined) {
+                child.children.forEach((child) => {
+                    if(child.update instanceof Function) {
+                        child.update(delta)
+                    }
+                })
+            }
             if(child.update instanceof Function) {
                 child.update(delta)
             }
         })
-
-        if(this.collisionManager.update instanceof Function) {
-            this.collisionManager.update()
-        }
-
-        // Move the camera to follow the player.
-        this.position.x = -1 * (this.hero.position.x - (this.renderer.width / 2))
-        this.position.y = -1 * (this.hero.position.y - (this.renderer.height / 2))
-        // TODO: Tween this.
     }
     render() {
         this.renderer.render(this)

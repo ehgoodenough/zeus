@@ -1,7 +1,5 @@
 import * as Pixi from "pixi.js"
 
-var DEFAULT_TEXTURE = Pixi.Texture.fromImage(require("images/pixel.png"))
-
 export default class Sprite extends Pixi.Sprite {
     constructor(texture) {
         super(texture || Pixi.Texture.Empty)
