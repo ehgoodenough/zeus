@@ -42,7 +42,7 @@ export default class Hero extends Sprite {
         }
 
         this.maxhealth = 80
-        this.health = this.maxhealth
+        this.health = 60
     }
     update(delta) {
         if(this.isGrounded) {
