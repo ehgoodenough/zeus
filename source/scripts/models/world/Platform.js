@@ -4,14 +4,20 @@ import Sprite from "scripts/models/Sprite.js"
 import pixelSrc from "images/pixel.png"
 
 export default class Platform extends Sprite {
-    constructor(pointPairs) {
+    constructor(protoPlatform) {
         super(Pixi.Texture.EMPTY)
+        var pointPairs = protoPlatform.pointPairs
+        var attributes = protoPlatform.attributes
 
         this.anchor.x = 0.5
         this.anchor.y = 0.5
 
         this.scale.x = 1
         this.scale.y = 1
+
+        this.attributes = attributes?attributes:{}
+
+        console.log(this.attributes)
 
         //this.totalWidth =
         this.pointPairs = pointPairs
@@ -83,10 +89,10 @@ export default class Platform extends Sprite {
         var ctx = canvas.getContext("2d")
         for(let i = 0; i < canvas.width; i++) {
             //draw top
-            var topYPosition = Math.floor(this.getTopYAtX(this.position.x + i
+            var topYPosition = Math.round(this.getTopYAtX(this.position.x + i
                 -canvas.width/2) - this.position.y + canvas.height/2)
-            var bottomYPosition = this.getBottomYAtX(this.position.x + i
-                -canvas.width/2) - this.position.y + canvas.height/2
+            var bottomYPosition = Math.round(this.getBottomYAtX(this.position.x + i
+                -canvas.width/2) - this.position.y + canvas.height/2)
             for(let j = topYPosition; j < bottomYPosition; j++) {
                 ctx.drawImage(pixel, i, j)
             }
@@ -137,6 +143,7 @@ export default class Platform extends Sprite {
         return relativePointPairs
     }
     toJSON() {
-        return this.pointPairs
+        return {pointPairs: this.pointPairs, attributes: this.attributes}
+        //return this.pointPairs
     }
 }

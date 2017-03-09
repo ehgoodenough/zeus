@@ -82,7 +82,7 @@ export default class Hero extends Sprite {
 
         if(this.isGrounded) {
             if(this.inputs.down.isDown()) {
-                if(this.currentPlatform.isPermeable) {
+                if(this.currentPlatform.attributes.isPermeable) {
                     this.currentPlatform = null
                 }
             }

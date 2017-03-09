@@ -6,6 +6,7 @@ import Input from "scripts/layers/Input.js"
 import Platform from "scripts/models/world/Platform.js"
 import ControlPoint from "scripts/models/world/ControlPoint.js"
 import DeleteButton from "scripts/models/world/Deletebutton.js"
+import PermeableToggle from "scripts/models/world/PermeableToggle.js"
 
 import DevMode from "scripts/layers/DevMode.js"
 
@@ -60,7 +61,7 @@ export default class Level extends Container {
         if(this.trash.length > 0) {
             this.emptyTrash()
         }
-        if(this.inputs.p.isDown()) {
+        if(this.inputs.p.isDown() && DevMode.isActive) {
             if(!this.createdPlatformSincePress) {
                 if(this.inputs.one.isDown()) {
                     this.createNewPlatformAtCenter(1)
@@ -119,6 +120,7 @@ export default class Level extends Container {
             platform.controlPoints.push(topPoint, bottomPoint)
         }
         var deleteButton = new DeleteButton(platform)
+        var permeableToggle = new PermeableToggle(platform)
         this.controlPointSets.push(controlPoints)
     }
     createNewPlatformAtCenter(numSegments) {
@@ -133,7 +135,8 @@ export default class Level extends Container {
                 y: center.y + pointVertSpacing/2}
             pointPairs.push({top: newTop, bottom: newBottom})
         }
-        this.platforms.push(this.addChild(new Platform(pointPairs)))
+        this.platforms.push(this.addChild(new Platform({pointPairs: pointPairs,
+            attributes: {}})))
         if(DevMode.isActive) {
             this.generateControlPoints(this.platforms[this.platforms.length-1])
         }
