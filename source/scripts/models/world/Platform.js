@@ -17,6 +17,9 @@ export default class Platform extends Sprite {
         this.pointPairs = pointPairs
         this.numOfSegments = pointPairs.length - 1
 
+        //just for accessing, not for manipulating
+        this.controlPoints = []
+
         this.setCenterAndDimensions()
         this.generateNewTexture()
         this.tint = 0x888888

@@ -132,11 +132,11 @@ export default class Hero extends Sprite {
         }
 
         // Collide with the edges of the screen.
-        if(this.position.x < 0) {
-            this.position.x = 0
-        } if(this.position.x > 320) {
-            this.position.x = 320
-        }
+        // if(this.position.x < 0) {
+        //     this.position.x = 0
+        // } if(this.position.x > 320) {
+        //     this.position.x = 320
+        // }
     }
     get isGrounded() {
         if(this.currentPlatform === null) {

@@ -4,6 +4,7 @@ import Container from "scripts/models/Container.js"
 
 import Platform from "scripts/models/world/Platform.js"
 import ControlPoint from "scripts/models/world/ControlPoint.js"
+import DeleteButton from "scripts/models/world/Deletebutton.js"
 
 export default class Level extends Container {
     constructor(protoLevel) {
@@ -11,6 +12,8 @@ export default class Level extends Container {
 
         this.controlPointSets = []
         this.platforms = []
+
+        this.trash = []
 
         //iterate through platforms
         for(let i = 0; i < protoLevel.length; i++) {
@@ -28,7 +31,9 @@ export default class Level extends Container {
                 this.addChild(topPoint)
                 this.addChild(bottomPoint)
                 controlPoints.push(topPoint, bottomPoint)
+                this.platforms[i].controlPoints.push(topPoint, bottomPoint)
             }
+            var deleteButton = new DeleteButton(this.platforms[i])
             this.controlPointSets.push(controlPoints)
         }
         this.introduceControlPoints()
@@ -50,5 +55,25 @@ export default class Level extends Container {
         return this.platforms.map(function(platform) {
             return platform.toJSON()
         })
+    }
+    update(delta) {
+        if(this.trash.length > 0) {
+            this.emptyTrash()
+        }
+    }
+    emptyTrash() {
+        for(let i = 0; i < this.trash.length; i++) {
+            //If it's a platform's delete button, remove that platform
+            //from our list of platforms, and destory the platform, too
+            if(this.trash[i] instanceof DeleteButton) {
+                var subject = this.trash[i].subject
+                this.platforms = this.platforms.filter(function(platform) {
+                    return platform !== subject
+                })
+                subject.destroy()
+            }
+            this.trash[i].destroy()
+        }
+        this.trash = []
     }
 }

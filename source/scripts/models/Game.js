@@ -70,8 +70,8 @@ export default class Game extends Pixi.Container {
         }
 
         // Move the camera to follow the player.
-        this.position.x = -1 * (this.hero.position.x - (this.width / 2))
-        this.position.y = -1 * (this.hero.position.y - (this.height / 2))
+        this.position.x = -1 * (this.hero.position.x - (this.renderer.width / 2))
+        this.position.y = -1 * (this.hero.position.y - (this.renderer.height / 2))
         // TODO: Tween this.
     }
     render() {
