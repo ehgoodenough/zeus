@@ -22,4 +22,7 @@ export default class Scene extends Pixi.Container {
         this.position.x = -1 * (this.hero.position.x - (this.parent.renderer.width * 0.5))
         this.position.y = -1 * (this.hero.position.y - (this.parent.renderer.height * 0.6))
     }
+    stashLevel() {
+        Stash.set("level", this.level.toJSON())
+    }
 }
