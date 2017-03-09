@@ -43,7 +43,5 @@ export default class ControlPoint extends Sprite {
                 this.parent.parent.stashLevel()
             }
         })
-
-        this.visible = DevMode.isActive
     }
 }

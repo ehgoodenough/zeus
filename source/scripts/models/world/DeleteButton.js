@@ -34,7 +34,5 @@ export default class DeleteButton extends Sprite {
                 this.subject.parent.trash.push(this)
             }
         })
-
-        this.visible = DevMode.isActive
     }
 }
