@@ -45,8 +45,8 @@ export default class Game extends Container {
         this.renderer = Pixi.autoDetectRenderer(320, 180)
         this.renderer.backgroundColor = 0x444444
 
-        this.addChild(new Scene(protolevel))
-        this.addChild(new HeroHealthBar())
+        this.scene = this.addChild(new Scene(protolevel))
+        this.hud = this.addChild(new HeroHealthBar())
     }
     update(delta) {
         this.children.forEach((child) => {
