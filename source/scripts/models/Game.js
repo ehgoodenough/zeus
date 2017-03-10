@@ -7,10 +7,8 @@ import Container from "scripts/models/Container.js"
 import DevMode from "scripts/layers/DevMode.js"
 import Stash from "scripts/layers/Stash.js"
 
-import HeroHealthBar from "scripts/models/hud/HeroHealthBar.js"
-import Monster from "scripts/models/monsters/Monster.js"
-
 import Scene from "scripts/models/Scene.js"
+import HUD from "scripts/models/hud/HUD.js"
 
 ////////////////////
 // The Game Data //
@@ -45,8 +43,8 @@ export default class Game extends Container {
         this.renderer = Pixi.autoDetectRenderer(320, 180)
         this.renderer.backgroundColor = 0x444444
 
-        this.addChild(new Scene(protolevel))
-        this.addChild(new HeroHealthBar())
+        this.scene = this.addChild(new Scene(protolevel))
+        this.hud = this.addChild(new HUD())
     }
     update(delta) {
         this.children.forEach((child) => {

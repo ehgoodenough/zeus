@@ -42,6 +42,9 @@ export default class Hero extends Sprite {
             left: new Input(["A", "<left>"]),
             right: new Input(["D", "<right>"]),
         }
+
+        this.maxhealth = 80
+        this.health = 60
     }
     groundedUpdate(delta) {
         //Check horizontal inputs, add x velocity accordingly

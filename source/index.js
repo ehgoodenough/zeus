@@ -3,6 +3,8 @@ import Yaafloop from "yaafloop"
 import FPSmeter from "fpsmeter"
 import "statgrab/do"
 
+import DevMode from "scripts/layers/DevMode.js"
+
 ///////////////
 // The Game //
 /////////////
@@ -14,11 +16,13 @@ var game = new Game()
 var frame = document.getElementById("frame")
 frame.appendChild(game.renderer.view)
 
+if(STAGE == "DEVELOPMENT") {
+    window.game = game
+}
+
 ////////////////////
 // The FPS Meter //
 //////////////////
-
-import DevMode from "scripts/layers/DevMode.js"
 
 var meter = undefined
 if(DevMode.isActive) {

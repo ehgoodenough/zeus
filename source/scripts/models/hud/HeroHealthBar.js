@@ -9,24 +9,42 @@ export default class HeroHealthBar extends Container {
     constructor() {
         super()
 
-        this.position.x = 10
-        this.position.y = 10
+        this.outerfill = new Pixi.Sprite(PIXEL)
+        this.outerfill.tint = 0xFFFFFF
+        this.outerfill.scale.x = 84
+        this.outerfill.scale.y = 14
 
-        var left = new BoxSprite()
+        this.innerfill = new Pixi.Sprite(PIXEL)
+        this.innerfill.tint = 0x4A4A57
+        this.innerfill.position.x = 1
+        this.innerfill.position.y = 1
+        this.innerfill.scale.x = 82
+        this.innerfill.scale.y = 12
 
-        this.addChild(left)
+        this.bar = new Pixi.Sprite(PIXEL)
+        this.bar.tint = 0x9F2E35
+        this.bar.position.x = 2
+        this.bar.position.y = 2
+        this.bar.scale.x = 80
+        this.bar.scale.y = 10
+
+        this.addChild(this.outerfill)
+        this.addChild(this.innerfill)
+        this.addChild(this.bar)
     }
-}
+    update(delta) {
+        if(this.origin.scene != undefined
+        && this.origin.scene.hero != undefined) {
+            var maxhealth = this.origin.scene.hero.maxhealth || 50
+            var health = this.origin.scene.hero.health || 0
 
-class BoxSprite extends Sprite {
-    constructor() {
-        super(PIXEL)
+            if(health > maxhealth) {
+                health = maxhealth
+            }
 
-        this.scale.x = 16
-        this.scale.y = 16
-        this.anchor.x = 0
-        this.anchor.y = 0
-
-        this.tint = 0xFC3E2C
+            this.bar.scale.x = health
+            this.innerfill.scale.x = maxhealth + 2
+            this.outerfill.scale.x = maxhealth + 4
+        }
     }
 }
