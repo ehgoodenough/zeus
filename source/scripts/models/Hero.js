@@ -33,6 +33,7 @@ export default class Hero extends Sprite {
         this.lastGroundedYPosition = Infinity
         this.currentPlatform = null
         this.feetOffset = 19
+        this.headOffset = 22
 
         this.moveState = "airborne"
 
@@ -100,6 +101,7 @@ export default class Hero extends Sprite {
     }
     airborneUpdate(delta) {
         this.currentPlatform = this.collisionManager.getLanding()
+        var ceilingPlatform = this.collisionManager.getCeiling()
 
         //Check horizontal inputs, add x velocity accordingly
         if(this.inputs.left.isDown() && !this.inputs.right.isDown()) {
@@ -121,6 +123,14 @@ export default class Hero extends Sprite {
             this.velocity.y += this.gravity * this.gravityDampener * delta.f
         } else {
             this.velocity.y += this.gravity * delta.f
+        }
+
+        if(ceilingPlatform && this.position.y + this.velocity.y
+        < ceilingPlatform.getBottomYAtX(this.position.x) + this.headOffset
+        && !ceilingPlatform.attributes.isPermeable) {
+            this.position.y = ceilingPlatform.getBottomYAtX(this.position.x)
+            + this.headOffset - this.velocity.y
+            this.velocity.y *= 0.9
         }
 
         //Translate

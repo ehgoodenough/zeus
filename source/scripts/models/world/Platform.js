@@ -35,6 +35,15 @@ export default class Platform extends Sprite {
             return false
         }
     }
+    isPointBelowMe(point) {
+        if(point.x >= this.position.x - this.spriteWidth/2
+        && point.x <= this.position.x + this.spriteWidth/2
+        && point.y >= this.getBottomYAtX(point.x)) {
+            return true
+        } else {
+            return false
+        }
+    }
     getTopYAtX(x) {
         var leftPoint
         var rightPoint

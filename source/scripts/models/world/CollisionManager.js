@@ -8,7 +8,7 @@ export default class CollisionManager {
     }
     getLanding() {
         var nearestLandingPlatform = null
-        var heroHeight = this.hero.feetOffset
+        var feetOffset = this.hero.feetOffset
         var maxAltitude = Infinity
 
         for(let i = 0; i < this.level.platforms.length; i++) {
@@ -16,7 +16,7 @@ export default class CollisionManager {
             if(platYAtPlayerX <= maxAltitude
             && this.level.platforms[i].isPointAboveMe(
                 {x: this.hero.position.x, y: this.hero.position.y
-                    + heroHeight - this.fallthroughBuffer})) {
+                    + feetOffset - this.fallthroughBuffer})) {
                 maxAltitude = platYAtPlayerX
                 nearestLandingPlatform = this.level.platforms[i]
             }
@@ -28,6 +28,24 @@ export default class CollisionManager {
         return nearestLandingPlatform
     }
     getCeiling() {
+        var nearestCeilingPlatform = null
+        var headOffset = this.hero.headOffset
+        var minAltitude = -Infinity
 
+        for(let i = 0; i < this.level.platforms.length; i++) {
+            var platYAtPlayerX = this.level.platforms[i].getTopYAtX(this.hero.position.x)
+            if(platYAtPlayerX >= minAltitude
+            && this.level.platforms[i].isPointBelowMe(
+                {x: this.hero.position.x, y: this.hero.position.y
+                    + headOffset - this.fallthroughBuffer})) {
+                minAltitude = platYAtPlayerX
+                nearestCeilingPlatform = this.level.platforms[i]
+            }
+            //this.level.platforms[i].tint = 0x888888
+            //if(nearestCeilingPlatform) {
+                //nearestLandingPlatform.tint = 0xBBBBBB
+            //}
+        }
+        return nearestCeilingPlatform
     }
 }
