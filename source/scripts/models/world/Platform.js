@@ -17,8 +17,6 @@ export default class Platform extends Sprite {
 
         this.attributes = attributes?attributes:{}
 
-        console.log(this.attributes)
-
         //this.totalWidth =
         this.pointPairs = pointPairs
         this.numOfSegments = pointPairs.length - 1
