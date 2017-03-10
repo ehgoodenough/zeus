@@ -66,7 +66,4 @@ export default class Game extends Container {
     render() {
         this.renderer.render(this)
     }
-    stashLevel() {
-        Stash.set("level", this.level.toJSON())
-    }
 }

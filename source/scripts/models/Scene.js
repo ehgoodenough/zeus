@@ -16,8 +16,6 @@ export default class Scene extends Pixi.Container {
         this.addChild(this.hero)
     }
     update(delta) {
-        this.collisionManager.update()
-
         // Move the camera within the scene.
         this.position.x = -1 * (this.hero.position.x - (this.parent.renderer.width * 0.5))
         this.position.y = -1 * (this.hero.position.y - (this.parent.renderer.height * 0.6))
