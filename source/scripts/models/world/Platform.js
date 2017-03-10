@@ -17,11 +17,9 @@ export default class Platform extends Sprite {
 
         this.attributes = attributes?attributes:{}
 
-        //this.totalWidth =
         this.pointPairs = pointPairs
         this.numOfSegments = pointPairs.length - 1
 
-        //just for accessing, not for manipulating
         this.controlPoints = []
 
         this.setCenterAndDimensions()
@@ -37,26 +35,47 @@ export default class Platform extends Sprite {
             return false
         }
     }
+    isPointBelowMe(point) {
+        if(point.x >= this.position.x - this.spriteWidth/2
+        && point.x <= this.position.x + this.spriteWidth/2
+        && point.y >= this.getBottomYAtX(point.x)) {
+            return true
+        } else {
+            return false
+        }
+    }
     getTopYAtX(x) {
         var leftPoint
         var rightPoint
         var currentSegment = 0
         var found = false
-        while(currentSegment < this.pointPairs.length - 1 && !found) {
-            leftPoint = this.pointPairs[currentSegment].top
-            rightPoint = this.pointPairs[currentSegment+1].top
-            if(x >= leftPoint.x && x <= rightPoint.x) {
-                found = true
-            } else {
-                currentSegment += 1
-            }
-        }
-        var slope = (rightPoint.y - leftPoint.y)/(rightPoint.x - leftPoint.x)
-        var topOffset = leftPoint.y + (x - leftPoint.x) * slope
-        if(found) {
+        if(x < this.pointPairs[currentSegment].top.x) {
+            found = true
+            leftPoint = this.pointPairs[0].top
+            rightPoint = this.pointPairs[1].top
+            var slope = (rightPoint.y - leftPoint.y)/(rightPoint.x - leftPoint.x)
+            var topOffset = leftPoint.y + (leftPoint.x - x) * slope
+            return topOffset
+        } else if (x > this.pointPairs[this.pointPairs.length-1].top.x) {
+            found = true
+            leftPoint = this.pointPairs[this.pointPairs.length-2].top
+            rightPoint = this.pointPairs[this.pointPairs.length-1].top
+            var slope = (rightPoint.y - leftPoint.y)/(rightPoint.x - leftPoint.x)
+            var topOffset = rightPoint.y + (rightPoint.x - x) * slope
             return topOffset
         } else {
-            return Infinity
+            while(currentSegment < this.pointPairs.length - 1 && !found) {
+                leftPoint = this.pointPairs[currentSegment].top
+                rightPoint = this.pointPairs[currentSegment+1].top
+                if(x >= leftPoint.x && x <= rightPoint.x) {
+                    found = true
+                } else {
+                    currentSegment += 1
+                }
+            }
+            var slope = (rightPoint.y - leftPoint.y)/(rightPoint.x - leftPoint.x)
+            var topOffset = leftPoint.y + (x - leftPoint.x) * slope
+            return topOffset
         }
     }
     getBottomYAtX(x) {
@@ -75,7 +94,11 @@ export default class Platform extends Sprite {
         }
         var slope = (rightPoint.y - leftPoint.y)/(rightPoint.x - leftPoint.x)
         var topOffset = leftPoint.y + (x - leftPoint.x) * slope
-        return topOffset
+        if(found) {
+            return topOffset
+        } else {
+            return null
+        }
     }
     generateNewTexture() {
         var pixel = new Image()
@@ -142,6 +165,5 @@ export default class Platform extends Sprite {
     }
     toJSON() {
         return {pointPairs: this.pointPairs, attributes: this.attributes}
-        //return this.pointPairs
     }
 }
