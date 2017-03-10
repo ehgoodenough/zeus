@@ -93,15 +93,12 @@ export default class Hero extends Sprite {
         }
         if(this.inputs.down.isDown() && this.currentPlatform.attributes.isPermeable) {
             this.velocity.y = 0
-            console.log(this.collisionManager.fallthroughBuffer)
             this.position.y += (this.collisionManager.fallthroughBuffer + .00000001)
             this.moveState = "airborne"
             this.currentPlatform = null
-            console.log("doinit")
         }
     }
     airborneUpdate(delta) {
-        console.log("airborne")
         this.currentPlatform = this.collisionManager.getLanding()
 
         //Check horizontal inputs, add x velocity accordingly

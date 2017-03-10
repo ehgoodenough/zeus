@@ -45,6 +45,8 @@ export default class Game extends Container {
 
         this.scene = this.addChild(new Scene(protolevel))
         this.hud = this.addChild(new HUD())
+
+        console.log(PIXI)
     }
     update(delta) {
         this.children.forEach((child) => {
