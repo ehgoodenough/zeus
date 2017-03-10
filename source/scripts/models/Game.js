@@ -75,6 +75,6 @@ export default class Game extends Container {
     }
     restartScene() {
         this.removeChild(this.scene)
-        this.scene = this.addChild(new Scene(protolevel))
+        this.scene = this.addChildAt(new Scene(protolevel), 0)
     }
 }
