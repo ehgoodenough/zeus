@@ -47,6 +47,12 @@ export default class Game extends Container {
         this.hud = this.addChild(new HUD())
     }
     update(delta) {
+
+        if(this.restartingScene == true) {
+            this.restartingScene = false
+            this.restartScene()
+        }
+
         this.children.forEach((child) => {
             // TODO: Make this recursive.
             if(child.children != undefined) {
@@ -66,5 +72,9 @@ export default class Game extends Container {
     }
     stashLevel() {
         Stash.set("level", this.level.toJSON())
+    }
+    restartScene() {
+        this.removeChild(this.scene)
+        this.scene = this.addChild(new Scene(protolevel))
     }
 }

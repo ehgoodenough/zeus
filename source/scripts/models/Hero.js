@@ -140,6 +140,10 @@ export default class Hero extends Sprite {
         // } if(this.position.x > 320) {
         //     this.position.x = 320
         // }
+
+        if(this.position.y > 1000) {
+            this.origin.parent.restartingScene = true
+        }
     }
     get isGrounded() {
         if(this.currentPlatform === null) {
